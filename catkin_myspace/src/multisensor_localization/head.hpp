@@ -9,6 +9,8 @@ using namespace std;
 #include "ros/ros.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "sensor_msgs/Imu.h"
+#include "sensor_msgs/NavSatFix.h"
+#include  "tf/transform_listener.h"
 
 //pcl库(ros melodic自带版本1.8.1 )
 #include "pcl/point_types.h"
@@ -17,6 +19,11 @@ using namespace std;
 
 //eigen 库(ros melodic自带版本)
 #include "Eigen/Dense"
+
+//geographicLib 地理日志库2.1.1
+#include "GeographicLib/LocalCartesian.hpp"
+
+
 
 #endif
 

@@ -4,5 +4,6 @@
     ],
     "files.associations": {
         "ostream": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/src/multisensor_localization"
 }
