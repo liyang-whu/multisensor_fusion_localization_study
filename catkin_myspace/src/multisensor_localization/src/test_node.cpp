@@ -1,7 +1,11 @@
 #include "../head.hpp"
+//话题订阅
 #include "../include/subscriber/cloud_subscriber.hpp"
 #include "../include/subscriber/imu_subscriber.hpp"
 #include "../include/subscriber/gnss_subscriber.hpp"
+//话题发布
+#include "../include/publisher/odom_publisher.hpp"
+#include "../include/publisher/cloud_publisher.hpp""
 
 using namespace multisensor_localization;
 

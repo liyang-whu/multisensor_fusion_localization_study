@@ -11,6 +11,7 @@ using namespace std;
 #include "sensor_msgs/Imu.h"
 #include "sensor_msgs/NavSatFix.h"
 #include  "tf/transform_listener.h"
+#include "nav_msgs/Odometry.h"
 
 //pcl库(ros melodic自带版本1.8.1 )
 #include "pcl/point_types.h"
