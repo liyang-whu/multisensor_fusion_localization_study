@@ -7,6 +7,7 @@ namespace multisensor_localization
 {
     class TfListener
     {
+        public:
         TfListener(ros::NodeHandle &nh, string target_frame_id, string source_frame_id);
         TfListener() = default;
 

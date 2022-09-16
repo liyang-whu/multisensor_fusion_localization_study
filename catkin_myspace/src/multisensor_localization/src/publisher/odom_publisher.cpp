@@ -27,7 +27,7 @@ namespace multisensor_localization
         odom_.pose.pose.orientation.x = q.x();
         odom_.pose.pose.orientation.y = q.y();
         odom_.pose.pose.orientation.z = q.z();
-        odom_.pose.pose.orientation.z=q.w();
+        odom_.pose.pose.orientation.w=q.w();
         /*里程计发布*/
         publisher_.publish(odom_);
     }

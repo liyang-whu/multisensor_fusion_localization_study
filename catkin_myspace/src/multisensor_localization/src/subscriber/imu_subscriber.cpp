@@ -19,9 +19,9 @@ namespace multisensor_localization
         imu_data.linear_acceleration_.y = imu_msg_ptr->linear_acceleration.y;
         imu_data.linear_acceleration_.z = imu_msg_ptr->linear_acceleration.z;
         /*拷贝角速度*/
-        imu_data.angular_velocity_.x = imu_msg_ptr->linear_acceleration.x;
-        imu_data.angular_velocity_.y = imu_msg_ptr->linear_acceleration.y;
-        imu_data.angular_velocity_.z = imu_msg_ptr->linear_acceleration.z;
+        imu_data.angular_velocity_.x = imu_msg_ptr->angular_velocity.x;
+        imu_data.angular_velocity_.y = imu_msg_ptr->angular_velocity.y;
+        imu_data.angular_velocity_.z = imu_msg_ptr->angular_velocity.z;
         /*拷贝四元数*/
         imu_data.orientation_.x = imu_msg_ptr->orientation.x;
         imu_data.orientation_.y = imu_msg_ptr->orientation.y;

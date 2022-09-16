@@ -1,0 +1,4 @@
+<launch>
+<node pkg="rviz"  type="rviz"  name="rviz"  args="-d $(find multisensor_localization)/rviz/test.rviz"></node>
+<node pkg="multisensor_localization"  type="test_node"  name="test_node"  output="screen"></node>
+</launch>

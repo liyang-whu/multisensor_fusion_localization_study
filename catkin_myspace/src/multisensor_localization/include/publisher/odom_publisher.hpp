@@ -1,5 +1,5 @@
-#ifndef  _ODOM_PUBLISHER_H
-#define  _ODOM_PUBLISHER_H
+#ifndef _ODOM_PUBLISHER_H
+#define _ODOM_PUBLISHER_H
 
 #include "../../head.hpp"
 
@@ -7,6 +7,7 @@ namespace multisensor_localization
 {
     class OdomPublisher
     {
+    public:
         OdomPublisher(ros::NodeHandle &nh, string topic_name, string base_frame_id, string child_frame_id, int buff_size);
         OdomPublisher() = default;
 
