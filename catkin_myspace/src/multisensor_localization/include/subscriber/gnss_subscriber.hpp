@@ -19,7 +19,6 @@ namespace multisensor_localization
     private:
         ros::NodeHandle nh_;
         ros::Subscriber subscriber_;
-
         deque<GnssData> new_gnss_data_;
     };
 }

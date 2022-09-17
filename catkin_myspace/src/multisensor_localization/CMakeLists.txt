@@ -12,12 +12,14 @@ add_definitions(-std=c++14)
 set(THIRD_PART_LIBRARIES "")
 include(cmake/pcl.cmake)
 include(cmake/geographicLib.cmake)
+include(cmake/glog.cmake)
 
 #ROS设置
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
+  roslib
 )
 
 include_directories(

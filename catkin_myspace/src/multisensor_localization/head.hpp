@@ -12,6 +12,7 @@ using namespace std;
 #include "sensor_msgs/NavSatFix.h"
 #include  "tf/transform_listener.h"
 #include "nav_msgs/Odometry.h"
+#include  "ros/package.h"
 
 //pcl库(ros melodic自带版本1.8.1 )
 #include "pcl/point_types.h"
@@ -24,6 +25,9 @@ using namespace std;
 
 //geographicLib 地理日志库2.1.1
 #include "GeographicLib/LocalCartesian.hpp"
+
+//glog库
+#include "glog/logging.h"
 
 
 
