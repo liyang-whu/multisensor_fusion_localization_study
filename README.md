@@ -6,8 +6,8 @@
 
 运行shell
   ```shell
-  source devel/setup.bash
-  roslaunch multisensor_localization test_frame.launch
+ source devel/setup.bash
+ roslaunch multisensor_localization test_frame.launch
   ```
   
 Tag v1.0 惯导数据可视化   
