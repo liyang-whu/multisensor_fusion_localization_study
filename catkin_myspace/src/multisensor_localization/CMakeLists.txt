@@ -13,6 +13,8 @@ set(THIRD_PART_LIBRARIES "")
 include(cmake/pcl.cmake)
 include(cmake/geographicLib.cmake)
 include(cmake/glog.cmake)
+include(cmake/yamlcpp.cmake)
+
 
 #ROS设置
 find_package(catkin REQUIRED COMPONENTS

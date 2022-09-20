@@ -1,0 +1,19 @@
+#数据存放路径
+data_path:  /home/g/workspace/multisensor_fusion_localization_study/catkin_myspace/src/multisensor_localization/data # 数据存放路径
+
+
+#匹配方式 
+registration_method: NDT   # ICP SICP等方式可选择
+
+
+
+
+
+# NDT参数配置
+NDT:
+    res: 1.0
+    step_size: 0.1
+    trans_eps: 0.01 
+    max_iter: 30
+
+

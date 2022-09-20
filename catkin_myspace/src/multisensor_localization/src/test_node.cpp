@@ -1,29 +1,31 @@
 //通用库文件
 #include "../head.hpp"
-//传感器数据类型
-#include "../include/sensor_data/cloud_data.hpp"
-#include "../include/sensor_data/gnss_data.hpp"
-#include "../include/sensor_data/imu_data.hpp"
-//话题订阅
-#include "../include/subscriber/cloud_subscriber.hpp"
-#include "../include/subscriber/imu_subscriber.hpp"
-#include "../include/subscriber/gnss_subscriber.hpp"
-#include "../include/tf_listener/tf_listener.hpp"
-//话题发布
-#include "../include/publisher/odom_publisher.hpp"
-#include "../include/publisher/cloud_publisher.hpp"
-#include "../include/publisher/origin_publisher.hpp"
+#include "../include/front_end/front_end_flow.hpp"
 
 using namespace multisensor_localization;
+shared_ptr<FrontEndFlow> _front_end_flow_ptr;
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "test");
-    ros::NodeHandle nh;
     google::InitGoogleLogging(argv[0]);
     string path = ros::package::getPath("multisensor_localization");
-    
-    cout << "path is:"<<path << endl;
+    FLAGS_log_dir = path + "/log";
+    FLAGS_alsologtostderr = 1;
+    boost::filesystem::remove_all(FLAGS_log_dir);
+    boost::filesystem::create_directory(FLAGS_log_dir);
+
+    ros::init(argc, argv, "test");
+    ros::NodeHandle nh;
+
+    _front_end_flow_ptr = make_shared<FrontEndFlow>(nh);
+    ros::Rate rate(100);
+
+    while (ros::ok())
+    {
+        rate.sleep();
+        _front_end_flow_ptr->Run();
+    }
+    return 0;
 }
 
 // int main(int argc, char **argv)
@@ -37,9 +39,6 @@ int main(int argc, char **argv)
 //     shared_ptr<GnssSubscriber> gnss_sub_ptr_ = make_shared<GnssSubscriber>(nh, "/kitti/oxts/gps/fix", 1e6);
 //     shared_ptr<TfListener> lidar_to_imu_ptr_ = make_shared<TfListener>(nh, "velo_link", "imu_link");
 //     /*可视化数据发布*/
-//      shared_ptr<CloudPublisher> cloud_pub_ptr_ = make_shared<CloudPublisher>(nh, "current_scan", 100, "map");
-//     shared_ptr<OdomPublisher> odom_pub_ptr_ = make_shared<OdomPublisher>(nh, "ground_odom", "map", "lidar", 100);
-//     shared_ptr<OriginPublisher> origin_pub_ptr_ = make_shared<OriginPublisher>(nh, "ref_point_wgs84", 100, "map");
 
 //     deque<ImuData> imu_data_buff;
 //     deque<GnssData> gnss_data_buff;
