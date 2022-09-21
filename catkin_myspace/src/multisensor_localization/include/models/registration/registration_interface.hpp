@@ -10,14 +10,14 @@ namespace multisensor_localization
     class RegistrationInterface
     {
     public:
-    virtual ~RegistrationInterface()=default;
-        virtual bool SetTarget(const CloudData::CLOUD_PTR &target)=0;
+        virtual ~RegistrationInterface() = default;
+        virtual bool SetTarget(const CloudData::CLOUD_PTR &input_target) = 0;
 
         virtual bool ScanMatch(
-            const CloudData::CLOUD_PTR &cloud_in,
-            const CloudData::CLOUD_PTR cloud_out,
-            const Eigen::Matrix4f &pose_predict,
-            const Eigen::Matrix4f &pose_result) = 0;
+            const CloudData::CLOUD_PTR &cloud_in_ptr,
+            CloudData::CLOUD_PTR cloud_out_ptr,
+            const Eigen::Matrix4f &pose_in,
+            Eigen::Matrix4f &pose_out) = 0;
     };
 } // namespace name
 

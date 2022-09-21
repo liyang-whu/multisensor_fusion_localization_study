@@ -19,6 +19,7 @@ using namespace std;
 #include "pcl/point_cloud.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "pcl/common/transforms.h"
+#include  "pcl/registration/ndt.h"
 
 //eigen 库(ros melodic自带版本)
 #include "Eigen/Dense"

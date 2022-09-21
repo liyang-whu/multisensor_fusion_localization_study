@@ -1,9 +1,0 @@
-Log file created at: 2022/09/20 16:18:27
-Running on machine: g
-Running duration (h:mm:ss): 0:00:00
-Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I20220920 16:18:27.421257 13658 front_end.cpp:35] 【文件夹 data_path创建成功】
-I20220920 16:18:27.421412 13658 front_end.cpp:36] 路径为:/home/g/workspace/multisensor_fusion_localization_study/catkin_myspace/src/multisensor_localization/data/slam_data
-I20220920 16:18:27.421443 13658 front_end.cpp:48] 【文件夹 key_frame_path创建成功】
-I20220920 16:18:27.421450 13658 front_end.cpp:49] 路径为:/home/g/workspace/multisensor_fusion_localization_study/catkin_myspace/src/multisensor_localization/data/slam_data/key_frame
-I20220920 16:18:27.421458 13658 front_end.cpp:62] 【点云匹配方式】NDT

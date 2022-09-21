@@ -4,9 +4,11 @@ namespace multisensor_localization
 {
     VoxelFilter::VoxelFilter(const YAML::Node &node)
     {
+
     }
     VoxelFilter::VoxelFilter(float leaf_size_x, float leaf_size_y, float leaf_size_z)
     {
+        
     }
 
     bool VoxelFilter::Filter(const CloudData::CLOUD_PTR &input_clodu_ptr,

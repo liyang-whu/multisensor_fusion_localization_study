@@ -8,7 +8,7 @@
 
 namespace multisensor_localization
 {
-    class NdtRegistration: public RegistrationInterface
+    class NdtRegistration : public RegistrationInterface
     {
     public:
         NdtRegistration(const YAML::Node &node);
@@ -17,10 +17,16 @@ namespace multisensor_localization
         bool SetTarget(const CloudData::CLOUD_PTR &target) override;
 
         bool ScanMatch(
-            const CloudData::CLOUD_PTR &cloud_in,
-            const CloudData::CLOUD_PTR cloud_out,
-            const Eigen::Matrix4f &pose_predict,
-            const Eigen::Matrix4f &pose_result) override;
+            const CloudData::CLOUD_PTR &cloud_in_ptr,
+            CloudData::CLOUD_PTR cloud_out_ptr,
+            const Eigen::Matrix4f &pose_in,
+            Eigen::Matrix4f &pose_out) override;
+
+    private:
+        bool SetRegistrationParam(float res, float step_size, float trans_eps, int max_iter);
+
+    private:
+        pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT>::Ptr ndt_ptr_;
     };
 } // multisensor_localization
 

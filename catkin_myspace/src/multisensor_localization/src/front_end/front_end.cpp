@@ -19,7 +19,6 @@ namespace multisensor_localization
         InitDataPath(config_node);
         InitRegistration(registration_ptr_,config_node);
         
-
         return true;
     }
 
