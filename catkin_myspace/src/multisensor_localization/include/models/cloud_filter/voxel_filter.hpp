@@ -14,7 +14,14 @@ namespace multisensor_localization
 
           bool Filter(const CloudData::CLOUD_PTR &input_clodu_ptr,
                             CloudData::CLOUD_PTR &filtered_cloud_ptr) override;
-    }
+
+        private:
+        bool SetFilterParam(float leaf_size_x,float leaf_size_y,float leaf_size_z);
+
+        private:
+        pcl::VoxelGrid<CloudData::POINT> voxel_filter_;
+        
+    };
 
 } // namespace namespace multisensor_localization
 

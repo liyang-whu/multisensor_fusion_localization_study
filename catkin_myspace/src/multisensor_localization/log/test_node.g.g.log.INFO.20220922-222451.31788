@@ -1,0 +1,8 @@
+Log file created at: 2022/09/22 22:24:51
+Running on machine: g
+Running duration (h:mm:ss): 0:00:00
+Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I20220922 22:24:51.588183 31788 front_end.cpp:54] 
+[33mslam_data文件夹创建成功[0m
+[34m/home/g/workspace/multisensor_fusion_localization_study/catkin_myspace/src/multisensor_localization/data/slam_data[0m
+

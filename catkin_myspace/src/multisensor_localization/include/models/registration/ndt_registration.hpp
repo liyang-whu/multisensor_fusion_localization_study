@@ -15,11 +15,10 @@ namespace multisensor_localization
         NdtRegistration(float res, float step_size, float trans_eps, int max_iter);
 
         bool SetTarget(const CloudData::CLOUD_PTR &target) override;
-
         bool ScanMatch(
             const CloudData::CLOUD_PTR &cloud_in_ptr,
-            CloudData::CLOUD_PTR cloud_out_ptr,
             const Eigen::Matrix4f &pose_in,
+            CloudData::CLOUD_PTR cloud_out_ptr,
             Eigen::Matrix4f &pose_out) override;
 
     private:

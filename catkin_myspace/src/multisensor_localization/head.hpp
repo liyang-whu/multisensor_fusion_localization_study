@@ -20,6 +20,7 @@ using namespace std;
 #include "pcl_conversions/pcl_conversions.h"
 #include "pcl/common/transforms.h"
 #include  "pcl/registration/ndt.h"
+#include "pcl/filters/voxel_grid.h"
 
 //eigen 库(ros melodic自带版本)
 #include "Eigen/Dense"

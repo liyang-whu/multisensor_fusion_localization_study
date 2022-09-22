@@ -1,29 +1,30 @@
 //通用库文件
-#include "../head.hpp"
 #include "../include/front_end/front_end_flow.hpp"
 
 using namespace multisensor_localization;
-shared_ptr<FrontEndFlow> _front_end_flow_ptr;
+shared_ptr<FrontEndFlow> front_end_flow_ptr;
 
 int main(int argc, char **argv)
 {
+    /* glog配置 */
     google::InitGoogleLogging(argv[0]);
     string path = ros::package::getPath("multisensor_localization");
     FLAGS_log_dir = path + "/log";
     FLAGS_alsologtostderr = 1;
     boost::filesystem::remove_all(FLAGS_log_dir);
     boost::filesystem::create_directory(FLAGS_log_dir);
-
+    /*节点配置*/
     ros::init(argc, argv, "test");
     ros::NodeHandle nh;
-
-    _front_end_flow_ptr = make_shared<FrontEndFlow>(nh);
     ros::Rate rate(100);
+    /*前端里程计初始化*/
+    front_end_flow_ptr = make_shared<FrontEndFlow>(nh);
 
-    while (ros::ok())
+    while (ros::ok()) 
     {
-        rate.sleep();
-        _front_end_flow_ptr->Run();
+
+       // front_end_flow_ptr->Run();
+                rate.sleep();
     }
     return 0;
 }

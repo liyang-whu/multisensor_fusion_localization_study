@@ -18,7 +18,7 @@ namespace multisensor_localization
         gnss_odom_pub_ptr_ = make_shared<OdomPublisher>(nh, "gnss_odom", "map", "lidar", 100);
         laser_odom_pub_ptr_ = make_shared<OdomPublisher>(nh, "lidar_odom", "map", "lidar", 100);
         /*前端里程计*/
-        front_end_ptr_=make_shared<FrontEnd>();
+        front_end_ptr_ = make_shared<FrontEnd>();
         /*重置地图指针*/
         local_map_ptr_.reset(new CloudData::CLOUD());
         global_map_ptr_.reset(new CloudData::CLOUD());
@@ -27,6 +27,19 @@ namespace multisensor_localization
 
     bool FrontEndFlow::Run()
     {
+
+        /*数据读取*/
+
+        /*传感器标定*/
+
+        /*gnss初始化*/
+
+        while (1 /*有数据*/)
+        {
+            /*更新gnss imu里程计*/
+            /*更新laser里程计*/
+        }
+
         return true;
     }
 

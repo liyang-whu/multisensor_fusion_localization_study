@@ -25,8 +25,19 @@ namespace multisensor_localization
     class FrontEndFlow
     {
     public:
+        /*构造函数完成初始化*/
         FrontEndFlow(ros::NodeHandle &nh);
         bool Run();
+
+    private:
+        bool ReadData();
+        bool Calibration();
+        bool InitGnss();
+        bool HasData();
+        bool ValidData();
+        bool UpdateGnssOdom();
+        bool UpdateLaserOdom();
+        bool PublishData();
 
     private:
         /*前端里程计*/
