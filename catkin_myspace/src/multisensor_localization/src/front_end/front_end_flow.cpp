@@ -29,18 +29,155 @@ namespace multisensor_localization
     {
 
         /*数据读取*/
-
+        ReadData();
         /*传感器标定*/
-
+        if (!Calibration())
+            return false;
         /*gnss初始化*/
+        if (!InitGnss())
+            return false;
 
-        while (1 /*有数据*/)
+        while (HasData())
         {
+            /*有效数据进行处理 无效数据直接跳过*/
+            if (!ValidData())
+                continue;
+
             /*更新gnss imu里程计*/
+            UpdateGnssOdom();
             /*更新laser里程计*/
+
+            /*发布可视化信息*/
+            PublishData();
         }
 
         return true;
+    }
+
+    /**
+          @brief 从缓冲区读取数据到队列
+         */
+    bool FrontEndFlow::ReadData()
+    {
+        cloud_sub_ptr_->ParseData(cloud_data_buff_);
+        imu_sub_ptr_->ParseData(imu_data_buff_);
+        gnss_sub_ptr_->ParseData(gnss_data_buff_);
+    }
+
+    /**
+        @brief 多传感器标定
+        @note
+        @todo
+    **/
+    bool FrontEndFlow::Calibration()
+    {
+        static bool CalibrationFlag = false;
+        if (CalibrationFlag == false)
+        {
+            lidar_to_imu_ << 0.999998, 0.000755307, -0.00203583, -0.808676,
+                -0.000785403, 0.99989, -0.014823, 0.319556,
+                0.00202441, 0.0148245, 0.999888, -0.799723,
+                0, 0, 0, 1;
+            CalibrationFlag = true;
+
+            LOG(INFO) << endl
+                      << fontColorYellow << "lidar imu标定完成" << fontColorReset << endl
+                      << fontColorBlue << lidar_to_imu_ << fontColorReset << endl
+                      << endl;
+        }
+        return CalibrationFlag;
+    }
+
+    /**
+        @brief 初始化gnss
+        @note
+        @todo
+    **/
+    bool FrontEndFlow::InitGnss()
+    {
+        static bool gnss_init = false;
+        if (!gnss_init && gnss_data_buff_.size() > 0)
+        {
+            GnssData gnss_data_origin = gnss_data_buff_.front();
+            gnss_data_origin.InitOriginPosition();
+            gnss_init = true;
+            LOG(INFO) << endl
+                      << fontColorYellow << "gnss初始化完成" << fontColorReset << endl
+                      << fontColorBlue << "经度" << gnss_data_origin.longtitude_ << fontColorReset << endl
+                      << fontColorBlue << "纬度" << gnss_data_origin.latitude_ << fontColorReset << endl
+                      << fontColorBlue << "海拔" << gnss_data_origin.altitude_ << fontColorReset << endl
+                      << endl;
+            origin_pub_ptr_->Publish(gnss_data_origin);
+        }
+        return gnss_init;
+    }
+
+    /**
+        @brief 检查数据队列中是否有数据
+        @note
+        @todo
+    **/
+    bool FrontEndFlow::HasData()
+    {
+        if (cloud_data_buff_.size() == 0)
+            return false;
+        if (imu_data_buff_.size() == 0)
+            return false;
+        if (gnss_data_buff_.size() == 0)
+            return false;
+
+        return true;
+    }
+
+    /**
+        @brief 提取有效数据
+        @note
+        @todo
+    **/
+    bool FrontEndFlow::ValidData()
+    {
+        current_cloud_data_ = cloud_data_buff_.front();
+        current_imu_data_ = imu_data_buff_.front();
+        current_gnss_data_ = gnss_data_buff_.front();
+
+        double d_time = current_cloud_data_.time_stamp_ - current_imu_data_.time_stamp_;
+
+        /*点云数据超前 惯导数据滞后*/
+        if (d_time > 0.05)
+        {
+            imu_data_buff_.pop_front();
+            gnss_data_buff_.pop_front();
+            return false;
+        }
+
+        /*点云数据滞后  惯导数据超前*/
+        if (d_time < -0.05)
+        {
+            cloud_data_buff_.pop_front();
+            return false;
+        }
+
+        cloud_data_buff_.pop_front();
+        imu_data_buff_.pop_front();
+        gnss_data_buff_.pop_front();
+        return true;
+    }
+
+    bool FrontEndFlow::UpdateGnssOdom()
+    {
+        gnss_odom_ = Eigen::Matrix4f::Identity();
+        current_gnss_data_.UpdateXYZ();
+        gnss_odom_(0, 3) = current_gnss_data_.local_E_;
+        gnss_odom_(1, 3) = current_gnss_data_.local_N_;
+        gnss_odom_(2, 3) = current_gnss_data_.local_U_;
+
+        gnss_odom_.block<3, 3>(0, 0) = current_imu_data_.OrientationToRotation();
+        gnss_odom_ *= lidar_to_imu_;
+    }
+
+    bool FrontEndFlow::PublishData()
+    {
+        gnss_odom_pub_ptr_->Publish(gnss_odom_);
     }
 
 }

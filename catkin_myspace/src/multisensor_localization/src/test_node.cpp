@@ -20,11 +20,11 @@ int main(int argc, char **argv)
     /*前端里程计初始化*/
     front_end_flow_ptr = make_shared<FrontEndFlow>(nh);
 
-    while (ros::ok()) 
+    while (ros::ok())
     {
-
-       // front_end_flow_ptr->Run();
-                rate.sleep();
+        ros::spinOnce();
+        front_end_flow_ptr->Run();
+        rate.sleep();
     }
     return 0;
 }

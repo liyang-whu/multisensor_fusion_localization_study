@@ -14,7 +14,7 @@ namespace multisensor_localization
     {
         if (origin_position_inited_ == false)
         {
-            cout<<"东北天坐标系未初始化"<<endl;
+            //cout<<"东北天坐标系未初始化"<<endl;
         }
         geo_converter_.Forward(latitude_, longtitude_, altitude_, local_E_, local_N_, local_U_);
     }

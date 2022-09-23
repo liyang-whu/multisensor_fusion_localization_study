@@ -6,12 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Grid1
         - /Odometry1
         - /Odometry1/Shape1
-        - /PointCloud21
-        - /AerialMapDisplay1
-        - /Axes1
       Splitter Ratio: 0.5
     Tree Height: 548
   - Class: rviz/Selection
@@ -32,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: Image
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -89,7 +85,7 @@ Visualization Manager:
         Shaft Length: 1
         Shaft Radius: 0.5
         Value: Arrow
-      Topic: /ground_odom
+      Topic: /gnss_odom
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -180,25 +176,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 222.5576629638672
+      Distance: 522.3062133789062
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 11.864081382751465
-        Y: 404.9499816894531
-        Z: 24.741989135742188
+        X: 0
+        Y: 0
+        Z: 0
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2747967541217804
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.830410480499268
+      Yaw: 1.6522847414016724
     Saved: ~
 Window Geometry:
   Displays:

@@ -58,9 +58,11 @@ namespace multisensor_localization
         CloudData::CLOUD_PTR current_scan_ptr_;
         CloudData::CLOUD_PTR local_map_ptr_;
         CloudData::CLOUD_PTR global_map_ptr_;
+        /*坐标变换*/
+          Eigen::Matrix4f lidar_to_imu_ = Eigen::Matrix4f::Identity();
         /*里程计*/
-        Eigen::Matrix4f gnss_odom = Eigen::Matrix4f::Identity();
-        Eigen::Matrix4f laser_odom = Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f gnss_odom_= Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f laser_odom_= Eigen::Matrix4f::Identity();
         /*队列中传感器数据*/
         deque<CloudData> cloud_data_buff_;
         deque<ImuData> imu_data_buff_;
