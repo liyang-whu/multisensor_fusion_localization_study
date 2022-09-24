@@ -46,7 +46,7 @@ namespace multisensor_localization
             /*更新gnss imu里程计*/
             UpdateGnssOdom();
             /*更新laser里程计*/
-
+            UpdateLaserOdom();
             /*发布可视化信息*/
             PublishData();
         }
@@ -71,21 +71,21 @@ namespace multisensor_localization
     **/
     bool FrontEndFlow::Calibration()
     {
-        static bool CalibrationFlag = false;
-        if (CalibrationFlag == false)
+        static bool calibration_inited = false;
+        if (calibration_inited == false)
         {
             lidar_to_imu_ << 0.999998, 0.000755307, -0.00203583, -0.808676,
                 -0.000785403, 0.99989, -0.014823, 0.319556,
                 0.00202441, 0.0148245, 0.999888, -0.799723,
                 0, 0, 0, 1;
-            CalibrationFlag = true;
+            calibration_inited = true;
 
             LOG(INFO) << endl
                       << fontColorYellow << "lidar imu标定完成" << fontColorReset << endl
                       << fontColorBlue << lidar_to_imu_ << fontColorReset << endl
                       << endl;
         }
-        return CalibrationFlag;
+        return calibration_inited;
     }
 
     /**
@@ -175,9 +175,42 @@ namespace multisensor_localization
         gnss_odom_ *= lidar_to_imu_;
     }
 
+    bool FrontEndFlow::UpdateLaserOdom()
+    {
+
+        /*利用gnss进行初始化*/
+        static bool front_end_pose_inited = false;
+        if (!front_end_pose_inited)
+        {
+            front_end_pose_inited = true;
+            front_end_ptr_->SetInitPose(gnss_odom_);
+
+            laser_odom_ = gnss_odom_;
+
+            LOG(INFO) << endl
+                      << fontColorYellow << "激光里程计初始化位姿" << fontColorReset << endl
+                      << fontColorBlue << laser_odom_ << fontColorReset << endl
+                      << endl;
+
+            return true;
+        }
+        /*更新激光里程计*/
+        laser_odom_ = Eigen::Matrix4f::Identity();
+        front_end_ptr_->Update(current_cloud_data_, laser_odom_);
+        return true;
+    }
+
     bool FrontEndFlow::PublishData()
     {
         gnss_odom_pub_ptr_->Publish(gnss_odom_);
+        laser_odom_pub_ptr_->Publish(laser_odom_);
+
+        if(front_end_ptr_->GetNewLocalMap(local_map_ptr_))
+        {
+            local_map_pub_ptr_->Publish(local_map_ptr_);
+        }
     }
 
+
+    
 }

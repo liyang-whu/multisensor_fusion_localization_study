@@ -9,6 +9,10 @@
         "random": "cpp",
         "future": "cpp",
         "optional": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "core": "cpp",
+        "numericaldiff": "cpp"
     }
 }

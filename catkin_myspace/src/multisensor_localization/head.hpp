@@ -21,6 +21,7 @@ using namespace std;
 #include "pcl/common/transforms.h"
 #include "pcl/registration/ndt.h"
 #include "pcl/filters/voxel_grid.h"
+#include  "pcl/io/pcd_io.h"
 
 // eigen 库(ros melodic自带版本)
 #include "Eigen/Dense"
