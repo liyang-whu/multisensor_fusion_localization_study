@@ -209,6 +209,11 @@ namespace multisensor_localization
         {
             local_map_pub_ptr_->Publish(local_map_ptr_);
         }
+
+        front_end_ptr_->GetCurrentScan(current_scan_ptr_);
+        current_scan_pub_ptr_->Publish(current_scan_ptr_);
+
+        return true;
     }
 
 
