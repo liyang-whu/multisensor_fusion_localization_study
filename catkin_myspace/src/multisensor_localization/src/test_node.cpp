@@ -13,6 +13,7 @@ bool SaveMapCallBack(saveMap::Request &request, saveMap::Response &response)
               << fontColorYellow << "全局地图已保存完成" << fontColorReset << endl
               << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
               << endl;
+              
     return response.succeed;
 }
 
@@ -28,8 +29,7 @@ int main(int argc, char **argv)
     /*节点配置*/
     ros::init(argc, argv, "test");
     ros::NodeHandle nh;
-    const int test_time = 100;
-    ros::Rate rate(test_time);
+    ros::Rate rate(10);
     /*前端里程计初始化*/
     front_end_flow_ptr = make_shared<FrontEndFlow>(nh);
     /*生成全局地图*/

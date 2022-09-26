@@ -1,8 +1,20 @@
+/*
+ * @Description: front_end_flow 前端里程计算任务管理器
+ * @Author: robotics 港
+ * @Date: 2022-9-26
+ * @Note: Modifiled from Ren Qian (github.com/Little-Potato-1990/localization_in_auto_driving)
+ */
+
 #include "../../include/front_end/front_end_flow.hpp"
 
 namespace multisensor_localization
 {
-
+    /**
+     * @brief 前端任务管理初始化
+     * 初始化订阅器、发布器、前端里程计
+     * @note 调用了FrontEnd()构造
+     * @todo 话题配置参数化
+     **/
     FrontEndFlow::FrontEndFlow(ros::NodeHandle &nh)
     {
         /*传感器信息订阅*/
@@ -20,22 +32,34 @@ namespace multisensor_localization
         /*前端里程计*/
         front_end_ptr_ = make_shared<FrontEnd>();
         /*重置地图指针*/
+        current_scan_ptr_.reset(new CloudData::CLOUD());
         local_map_ptr_.reset(new CloudData::CLOUD());
         global_map_ptr_.reset(new CloudData::CLOUD());
-        current_scan_ptr_.reset(new CloudData::CLOUD());
     }
 
+    /**
+     * @brief 前端任务管理调度执行
+     * @note
+     * @todo
+     **/
     bool FrontEndFlow::Run()
     {
-
         /*数据读取*/
         ReadData();
+
         /*传感器标定*/
         if (!Calibration())
             return false;
         /*gnss初始化*/
         if (!InitGnss())
             return false;
+
+        /*************************************************/
+        LOG(INFO) << endl
+                  << fontColorRedBold << "+++++++++++++++++++++" << endl
+                  << fontColorReset << endl;
+        ROS_BREAK();
+        /************************************************/
 
         while (HasData())
         {
@@ -55,25 +79,31 @@ namespace multisensor_localization
     }
 
     /**
-          @brief 从缓冲区读取数据到队列
-         */
+     * @brief  从缓冲区读取到传感器数据队列中
+     * 点云 imu gnss
+     * @note
+     * @todo
+     **/
     bool FrontEndFlow::ReadData()
     {
         cloud_sub_ptr_->ParseData(cloud_data_buff_);
         imu_sub_ptr_->ParseData(imu_data_buff_);
         gnss_sub_ptr_->ParseData(gnss_data_buff_);
+
+        return true;
     }
 
     /**
         @brief 多传感器标定
         @note
-        @todo
+        @todo yaml读参已标定数据或者支持在线标定模块
     **/
     bool FrontEndFlow::Calibration()
     {
         static bool calibration_inited = false;
         if (calibration_inited == false)
         {
+            /*lidar imu标定位*/
             lidar_to_imu_ << 0.999998, 0.000755307, -0.00203583, -0.808676,
                 -0.000785403, 0.99989, -0.014823, 0.319556,
                 0.00202441, 0.0148245, 0.999888, -0.799723,
@@ -81,7 +111,7 @@ namespace multisensor_localization
             calibration_inited = true;
 
             LOG(INFO) << endl
-                      << fontColorYellow << "lidar imu标定完成" << fontColorReset << endl
+                      << fontColorYellow << "lidar-imu标定完成" << fontColorReset << endl
                       << fontColorBlue << lidar_to_imu_ << fontColorReset << endl
                       << endl;
         }
@@ -95,21 +125,27 @@ namespace multisensor_localization
     **/
     bool FrontEndFlow::InitGnss()
     {
-        static bool gnss_init = false;
-        if (!gnss_init && gnss_data_buff_.size() > 0)
+        static bool gnss_inited = false;
+        if (!gnss_inited && gnss_data_buff_.size() > 0)
         {
+            /*以gnss队列初数据作为定位原点*/
             GnssData gnss_data_origin = gnss_data_buff_.front();
             gnss_data_origin.InitOriginPosition();
-            gnss_init = true;
+            gnss_inited = true;
+
+            origin_pub_ptr_->Publish(gnss_data_origin);
+
             LOG(INFO) << endl
                       << fontColorYellow << "gnss初始化完成" << fontColorReset << endl
                       << fontColorBlue << "经度" << gnss_data_origin.longtitude_ << fontColorReset << endl
                       << fontColorBlue << "纬度" << gnss_data_origin.latitude_ << fontColorReset << endl
                       << fontColorBlue << "海拔" << gnss_data_origin.altitude_ << fontColorReset << endl
                       << endl;
-            origin_pub_ptr_->Publish(gnss_data_origin);
+
+            DisplayProgress("【part2 传感器初始化完成】");
+
         }
-        return gnss_init;
+        return gnss_inited;
     }
 
     /**
@@ -219,7 +255,6 @@ namespace multisensor_localization
     bool FrontEndFlow::SaveMap()
     {
         return front_end_ptr_->SaveMap();
-
     }
 
 }

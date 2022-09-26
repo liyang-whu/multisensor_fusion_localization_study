@@ -20,7 +20,6 @@ namespace multisensor_localization
         origin_.altitude = gnss_input.status_;
         origin_.status.service = gnss_input.service_;
 
-        cout << "has sent origin" << endl;
         publisher_.publish(origin_);
     }
 

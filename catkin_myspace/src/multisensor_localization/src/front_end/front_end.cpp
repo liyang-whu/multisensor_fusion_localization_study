@@ -1,19 +1,202 @@
+/*
+ * @Description: front_end_flow 前端里程计算法
+ * @Author: robotics 港
+ * @Date: 2022-9-26
+ * @Note: Modifiled from Ren Qian (github.com/Little-Potato-1990/localization_in_auto_driving)
+ */
+
 #include "../../include/front_end/front_end.hpp"
 
 namespace multisensor_localization
 {
-
     /**
-     @brief 前端里程计算初始化
-    */
+     * @brief 前端算法初始化
+     * 调用参数配置函数
+     * @note ?result_map_ptr_
+     * @todo
+     **/
     FrontEnd::FrontEnd()
         : local_map_ptr_(new CloudData::CLOUD),
           global_map_ptr_(new CloudData::CLOUD),
           result_map_ptr_(new CloudData::CLOUD)
     {
-
         /*参数配置*/
         InitWithConfig();
+    }
+
+    /**
+     * @brief 参数配置:
+     * 配置点云存放路径、点云匹滤波参数、点云匹配参数方式、局部地图参数
+     * @note yaml node可递归
+     * @todo
+     **/
+    bool FrontEnd::InitWithConfig()
+    {
+        /*加载yaml参数文件*/
+        string config_file_path = ros::package::getPath("multisensor_localization") + "/config/front_end/config.yaml";
+        YAML::Node config_node = YAML::LoadFile(config_file_path);
+        /*配置数据存放路径*/
+        InitDataPath(config_node);
+        /*配置点云滤波方式*/
+        InitFilter("local_map", local_map_filter_ptr_, config_node);
+        InitFilter("frame", frame_filter_ptr_, config_node);
+        InitFilter("display", display_filter_ptr_, config_node);
+        /*配置点云匹配方式*/
+        InitRegistration(registration_ptr_, config_node);
+        /*配置局部地图参数*/
+        InitLocalMap(config_node);
+
+        DisplayProgress("【Part1 参数配置完成】");
+
+        return true;
+    }
+
+    /**
+     * @brief 配置数据存放路径
+     * @note LOG会记录并打印文件存储位置
+     * @todo
+     **/
+    bool FrontEnd::InitDataPath(const YAML::Node &config_node)
+    {
+        /*读取 "点云数据存放地址" 分别处理相对路径和绝对路径*/
+        data_path_ = config_node["data_path"].as<string>();
+        if (data_path_ == "./")
+        {
+            data_path_ = ros::package::getPath("multisensor_localization") + "/data";
+        }
+        else
+        {
+            data_path_ += "/data";
+        }
+        /*是否已存在该文件夹 存在则删除*/
+        if (boost::filesystem::is_directory(data_path_))
+        {
+            boost::filesystem::remove_all(data_path_);
+        }
+        /*尝试创建新文件夹*/
+        try
+        {
+            boost::filesystem::create_directory(data_path_);
+        }
+        catch (const boost::filesystem::filesystem_error &e)
+        {
+            LOG(INFO) << endl
+                      << fontColorRedBold << "数据存放文件夹路径非法" << endl
+                      << fontColorReset << endl;
+            ROS_BREAK();
+        }
+        /*检查slam_data文件夹是否创建成功*/
+        if (boost::filesystem::is_directory(data_path_))
+        {
+            LOG(INFO) << endl
+                      << fontColorYellow << "slam_data文件夹创建成功" << fontColorReset << endl
+                      << fontColorBlue << data_path_ << fontColorReset << endl
+                      << endl;
+        }
+        else
+        {
+            LOG(INFO) << endl
+                      << fontColorRedBold << "slam_data文件夹创建失败" << endl
+                      << fontColorReset << endl;
+            ROS_BREAK();
+        }
+        /*检查data/key_frame文件夹是否创建成功*/
+        string key_frame_path = data_path_ + "/key_frame";
+        boost::filesystem::create_directory(key_frame_path);
+        if (boost::filesystem::is_directory(key_frame_path))
+        {
+            LOG(INFO) << endl
+                      << fontColorYellow << "slam_data/key_frame 文件夹创建成功" << fontColorReset << endl
+                      << fontColorBlue << key_frame_path << fontColorReset << endl
+                      << endl;
+        }
+        else
+        {
+            LOG(INFO) << endl
+                      << fontColorRedBold << "slam_data/key_frame 文件夹创建失败" << endl
+                      << fontColorReset << endl;
+            ROS_BREAK();
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief 配置点云滤波方法
+     * @note
+     * @todo
+     **/
+    bool FrontEnd::InitFilter(string filter_user,
+                              shared_ptr<CloudFilterInterface> &filter_ptr,
+                              const YAML::Node &config_node)
+    {
+        /*读参"滤波方法"*/
+        string filter_method = config_node[filter_user + "_filter"].as<string>();
+        /*检查滤波方式*/
+        if (filter_method == "voxel_filter")
+        {
+            LOG(INFO) << endl
+                      << fontColorYellow << filter_user << "滤波方式" << fontColorReset << endl
+                      << fontColorBlue << filter_method << fontColorReset << endl
+                      << endl;
+            filter_ptr = make_shared<VoxelFilter>(config_node[filter_method][filter_user]);
+        }
+        else
+        {
+            LOG(INFO) << endl
+                      << fontColorRedBold << "无对应的滤波方法" << endl
+                      << fontColorReset << endl;
+            ROS_BREAK();
+        }
+
+        return true;
+    }
+
+    /**
+     * @brief 配置点云配准方式
+     * @note
+     * @todo
+     **/
+    bool FrontEnd::InitRegistration(shared_ptr<RegistrationInterface> &registeration_ptr, const YAML::Node &config_node)
+    {
+        /*读参"点云匹配方法"*/
+        string registration_method = config_node["registration_method"].as<string>();
+        /*检查点云匹配方法*/
+        if (registration_method == "NDT")
+        {
+            LOG(INFO) << endl
+                      << fontColorYellow << "点云匹配方式" << fontColorReset << endl
+                      << fontColorBlue << registration_method << fontColorReset << endl
+                      << endl;
+            registeration_ptr = make_shared<NdtRegistration>(config_node[registration_method]);
+        }
+        else
+        {
+            LOG(INFO) << endl
+                      << fontColorRedBold << "无对应的点云匹配方法" << endl
+                      << fontColorReset << endl;
+            ROS_BREAK();
+        }
+        return true;
+    }
+
+    /**
+     * @brief 配置局部地图数据
+     * @note
+     * @todo
+     **/
+    bool FrontEnd::InitLocalMap(const YAML::Node &config_node)
+    {
+        key_frame_distance_ = config_node["key_frame_distance"].as<float>();
+        local_frame_num_ = config_node["local_frame_num"].as<float>();
+
+        LOG(INFO) << endl
+                  << fontColorYellow << "局部地图参数 " << fontColorReset << endl
+                  << fontColorBlue << "关键帧提取距离  " << key_frame_distance_ << fontColorReset << endl
+                  << fontColorBlue << "关键帧队列数量  " << local_frame_num_ << fontColorReset << endl
+                  << endl;
+
+        return true;
     }
 
     bool FrontEnd::Update(const CloudData &cloud_data, Eigen::Matrix4f &cloud_pose)
@@ -79,122 +262,6 @@ namespace multisensor_localization
                   << fontColorBlue << cloud_pose << fontColorReset << endl
                   << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
                   << endl;
-
-        return true;
-    }
-
-    /**
-      @brief 前端里程计参数配置
-     */
-    bool FrontEnd::InitWithConfig()
-    {
-        /*加载yaml参数文件*/
-        string config_file_path = ros::package::getPath("multisensor_localization") + "/config/front_end/config.yaml";
-        YAML::Node config_node = YAML::LoadFile(config_file_path);
-        /*设置点云存放路径*/
-        InitDataPath(config_node);
-        /*设置点云匹配方式*/
-        InitRegistration(registration_ptr_, config_node);
-        /*设置点云滤波方式*/
-        InitFilter("local_map", local_map_filter_ptr_, config_node);
-        InitFilter("frame", frame_filter_ptr_, config_node);
-        InitFilter("display", display_filter_ptr_, config_node);
-
-        return true;
-    }
-
-    /**
-        @brief 创建点云数据文件夹
-       */
-    bool FrontEnd::InitDataPath(const YAML::Node &config_node)
-    {
-        /*读取到参数:点云数据存放地址*/
-        data_path_ = config_node["data_path"].as<string>() + "/slam_data";
-
-        /*删除旧文件并创建新文件夹*/
-        boost::filesystem::remove_all(data_path_);
-        boost::filesystem::create_directory(data_path_);
-
-        /*检查slam_data文件夹是否创建成功*/
-        if (boost::filesystem::is_directory(data_path_))
-        {
-            LOG(INFO) << endl
-                      << fontColorYellow << "slam_data文件夹创建成功" << fontColorReset << endl
-                      << fontColorBlue << data_path_ << fontColorReset << endl
-                      << endl;
-        }
-        else
-        {
-            LOG(INFO) << endl
-                      << fontColorRedBold << "slam_data文件夹创建失败" << endl
-                      << fontColorReset << endl;
-            ROS_BREAK();
-        }
-        /*检查slam_data/key_frame文件夹是否创建成功*/
-        string key_frame_path = data_path_ + "/key_frame";
-        boost::filesystem::create_directory(key_frame_path);
-        if (boost::filesystem::is_directory(key_frame_path))
-        {
-            LOG(INFO) << endl
-                      << fontColorYellow << "slam_data/key_frame 文件夹创建成功" << fontColorReset << endl
-                      << fontColorBlue << key_frame_path << fontColorReset << endl
-                      << endl;
-        }
-        else
-        {
-            LOG(INFO) << endl
-                      << fontColorRedBold << "slam_data/key_frame 文件夹创建失败" << endl
-                      << fontColorReset << endl;
-            ROS_BREAK();
-        }
-        return true;
-    }
-
-    bool FrontEnd::InitRegistration(shared_ptr<RegistrationInterface> &registeration_ptr, const YAML::Node &config_node)
-    {
-        /*匹配方法读参*/
-        string registration_method = config_node["registration_method"].as<string>();
-
-        if (registration_method == "NDT")
-        {
-            registeration_ptr = make_shared<NdtRegistration>(config_node[registration_method]);
-            LOG(INFO) << endl
-                      << fontColorYellow << "点云匹配方式" << fontColorReset << endl
-                      << fontColorBlue << registration_method << fontColorReset << endl
-                      << endl;
-        }
-        else
-        {
-            LOG(INFO) << endl
-                      << fontColorRedBold << "无对应的点云匹配方法" << endl
-                      << fontColorReset << endl;
-            ROS_BREAK();
-        }
-        return true;
-    }
-
-    bool FrontEnd::InitFilter(string filter_user, shared_ptr<CloudFilterInterface> &filter_ptr, const YAML::Node &config_node)
-    {
-        /*读参滤波方法*/
-        string filter_method = config_node[filter_user + "_filter"].as<string>();
-
-        LOG(INFO) << endl
-                  << fontColorYellow << filter_user << "滤波方式" << fontColorReset << endl
-                  << fontColorBlue << filter_method << fontColorReset << endl
-                  << endl;
-
-        /*设置滤波方法*/
-        if (filter_method == "voxel_filter")
-        {
-            filter_ptr = make_shared<VoxelFilter>(config_node[filter_method][filter_user]);
-        }
-        else
-        {
-            LOG(INFO) << endl
-                      << fontColorRedBold << "无对应的滤波方法" << endl
-                      << fontColorReset << endl;
-            ROS_BREAK();
-        }
 
         return true;
     }
@@ -280,19 +347,6 @@ namespace multisensor_localization
         return true;
     }
 
-    bool FrontEnd::InitParam(const YAML::Node &config_node)
-    {
-        key_frame_distance_ = config_node["key_frame_distance"].as<float>();
-        local_frame_num_ = config_node["local_frame_num"].as<float>();
-
-        // LOG(INFO) << endl
-        //           << fontColorYellow << "局部小地图 " << fontColorReset << endl
-        //           << fontColorBlue << registration_method << fontColorReset << endl
-        //           << endl;
-
-        return true;
-    }
-
     bool FrontEnd::SaveMap()
     {
         global_map_ptr_.reset(new CloudData::CLOUD());
@@ -322,10 +376,10 @@ namespace multisensor_localization
 
     bool FrontEnd::GetNewGlobalMap(CloudData::CLOUD_PTR &global_map_ptr)
     {
-        if(has_new_global_map_==true)
+        if (has_new_global_map_ == true)
         {
-            has_new_global_map_=false;
-            display_filter_ptr_->Filter(global_map_ptr,global_map_ptr);
+            has_new_global_map_ = false;
+            display_filter_ptr_->Filter(global_map_ptr, global_map_ptr);
             global_map_ptr_.reset(new CloudData::CLOUD());
             return true;
         }

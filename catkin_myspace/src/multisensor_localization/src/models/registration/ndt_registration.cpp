@@ -4,8 +4,10 @@ namespace multisensor_localization
 {
 
     /**
-   @brief DNT初始化(YAML读参)
-  */
+     * @brief NDT匹配初始化(参数节点方式)
+     * @note
+     * @todo
+     **/
     NdtRegistration::NdtRegistration(const YAML::Node &node)
         : ndt_ptr_(new pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT>())
     {
@@ -15,11 +17,22 @@ namespace multisensor_localization
         int max_iter = node["max_iter"].as<int>();
 
         SetRegistrationParam(res, step_size, trans_eps, max_iter);
+
+        LOG(INFO) << endl
+                  << fontColorYellow << "DNT匹配参数" << fontColorReset << endl
+                  << fontColorBlue
+                  << "res\t\t" << res << endl
+                  << "step_size\t" << step_size << endl
+                  << "trans_eps\t" << trans_eps << endl
+                  << "max_iter\t" << max_iter << endl
+                  << fontColorReset << endl;
     }
 
     /**
-      @brief DNT初始化(函数传参)
-     */
+     * @brief NDT匹配初始化(参数节点方式)
+     * @note
+     * @todo
+     **/
     NdtRegistration::NdtRegistration(float res, float step_size, float trans_eps, int max_iter)
         : ndt_ptr_(new pcl::NormalDistributionsTransform<CloudData::POINT, CloudData::POINT>())
     {
@@ -27,17 +40,21 @@ namespace multisensor_localization
     }
 
     /**
-        @brief DNT 设置目标点云
-       */
+     * @brief NDT设置输入点云(待转换点云)
+     * @note
+     * @todo
+     **/
     bool NdtRegistration::SetTarget(const CloudData::CLOUD_PTR &input_target)
     {
         ndt_ptr_->setInputTarget(input_target);
         return true;
     }
 
-    /**
-        @brief DNT 点云匹配
-       */
+     /**
+     * @brief NDT点云匹配
+     * @note
+     * @todo
+     **/
     bool NdtRegistration::ScanMatch(
         const CloudData::CLOUD_PTR &cloud_in_ptr,
         const Eigen::Matrix4f &pose_in,
@@ -50,25 +67,17 @@ namespace multisensor_localization
 
         return true;
     }
-
-    /**
-    @brief DNT 参数设置
-   */
+     /**
+     * @brief NDT参数设置
+     * @note
+     * @todo
+     **/
     bool NdtRegistration::SetRegistrationParam(float res, float step_size, float trans_eps, int max_iter)
     {
         ndt_ptr_->setResolution(res);
         ndt_ptr_->setStepSize(step_size);
         ndt_ptr_->setTransformationEpsilon(trans_eps);
         ndt_ptr_->setMaximumIterations(max_iter);
-
-        LOG(INFO) << endl
-                  << fontColorYellow << "DNT匹配参数" << fontColorReset << endl
-                  << fontColorBlue
-                  << "res\t\t" << res << endl
-                  << "step_size\t" << step_size << endl
-                  << "trans_eps\t" << trans_eps << endl
-                  << "max_iter\t" << max_iter << endl
-                  << fontColorReset << endl;
 
         return true;
     }

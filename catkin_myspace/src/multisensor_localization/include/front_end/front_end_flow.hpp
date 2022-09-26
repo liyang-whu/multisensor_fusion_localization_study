@@ -1,3 +1,10 @@
+/*
+ * @Description: front_end_flow 前端里程计算任务管理器
+ * @Author: robotics 港
+ * @Date: 2022-9-26
+ * @Note: Modifiled from Ren Qian (github.com/Little-Potato-1990/localization_in_auto_driving)
+ */
+
 #ifndef _FRONT_END_FLOW_H
 #define _FRONT_END_FLOW_H
 
@@ -25,7 +32,6 @@ namespace multisensor_localization
     class FrontEndFlow
     {
     public:
-        /*构造函数完成初始化*/
         FrontEndFlow(ros::NodeHandle &nh);
         bool Run();
         bool SaveMap();
@@ -60,11 +66,11 @@ namespace multisensor_localization
         CloudData::CLOUD_PTR local_map_ptr_;
         CloudData::CLOUD_PTR global_map_ptr_;
         /*坐标变换*/
-          Eigen::Matrix4f lidar_to_imu_ = Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f lidar_to_imu_ = Eigen::Matrix4f::Identity();
         /*里程计*/
-        Eigen::Matrix4f gnss_odom_= Eigen::Matrix4f::Identity();
-        Eigen::Matrix4f laser_odom_= Eigen::Matrix4f::Identity();
-        /*队列中传感器数据*/
+        Eigen::Matrix4f gnss_odom_ = Eigen::Matrix4f::Identity();
+        Eigen::Matrix4f laser_odom_ = Eigen::Matrix4f::Identity();
+        /*队列传感器数据*/
         deque<CloudData> cloud_data_buff_;
         deque<ImuData> imu_data_buff_;
         deque<GnssData> gnss_data_buff_;
