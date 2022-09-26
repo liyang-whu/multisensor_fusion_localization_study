@@ -21,12 +21,25 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   tf
+  rospy
   roslib
+  message_generation
+  std_srvs
+)
+
+add_service_files(
+  FILES
+  saveMap.srv
 )
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
 )
 
 catkin_package()

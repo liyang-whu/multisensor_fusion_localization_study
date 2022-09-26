@@ -17,6 +17,11 @@ NDT:
     trans_eps: 0.01 
     max_iter: 30
 
+#局部地图参数
+key_frame_distance: 2.0
+local_frame_num: 20 
+
+
 
 # 滤波器
 voxel_filter:

@@ -67,7 +67,7 @@ namespace multisensor_localization
                                  fabs(last_key_frame_pose(1, 3) - current_frame_.pose(1, 3)) +
                                  fabs(last_key_frame_pose(2, 3) - current_frame_.pose(2, 3));
 
-        if (distance_forward > key_frame_distance)
+        if (distance_forward > key_frame_distance_)
         {
             UpdateNewFrame(current_frame_);
             last_key_frame_pose = current_frame_.pose;
@@ -250,7 +250,7 @@ namespace multisensor_localization
             registration_ptr_->SetTarget(filtered_local_map_ptr);
         }
 
-        /*释放关键帧*/
+        /*释放关键帧但保留位姿*/
         key_frame.cloud_data.cloud_ptr_.reset(new CloudData::CLOUD());
         /*利用global_map_frames_.size记序号*/
         global_map_frames_.push_back(key_frame);
@@ -278,5 +278,57 @@ namespace multisensor_localization
     {
         display_filter_ptr_->Filter(result_map_ptr_, current_map_ptr);
         return true;
+    }
+
+    bool FrontEnd::InitParam(const YAML::Node &config_node)
+    {
+        key_frame_distance_ = config_node["key_frame_distance"].as<float>();
+        local_frame_num_ = config_node["local_frame_num"].as<float>();
+
+        // LOG(INFO) << endl
+        //           << fontColorYellow << "局部小地图 " << fontColorReset << endl
+        //           << fontColorBlue << registration_method << fontColorReset << endl
+        //           << endl;
+
+        return true;
+    }
+
+    bool FrontEnd::SaveMap()
+    {
+        global_map_ptr_.reset(new CloudData::CLOUD());
+
+        string key_frame_path = "";
+
+        CloudData::CLOUD_PTR key_frame_cloud_ptr(new CloudData::CLOUD());
+        CloudData::CLOUD_PTR transformed_cloud_ptr(new CloudData::CLOUD());
+
+        for (int i = 0; i < global_map_frames_.size(); i++)
+        {
+            key_frame_path = data_path_ + "/key_frame/key_frame_" + to_string(i) + ".pcd";
+            pcl::io::loadPCDFile(key_frame_path, *key_frame_cloud_ptr);
+            pcl::transformPointCloud(*key_frame_cloud_ptr,
+                                     *transformed_cloud_ptr,
+                                     global_map_frames_.at(i).pose);
+
+            *global_map_ptr_ += *transformed_cloud_ptr;
+        }
+
+        string map_file_path = data_path_ + "/map.pcd";
+        pcl::io::savePCDFileBinary(map_file_path, *global_map_ptr_);
+        has_new_global_map_ = true;
+
+        return true;
+    }
+
+    bool FrontEnd::GetNewGlobalMap(CloudData::CLOUD_PTR &global_map_ptr)
+    {
+        if(has_new_global_map_==true)
+        {
+            has_new_global_map_=false;
+            display_filter_ptr_->Filter(global_map_ptr,global_map_ptr);
+            global_map_ptr_.reset(new CloudData::CLOUD());
+            return true;
+        }
+        return false;
     }
 }

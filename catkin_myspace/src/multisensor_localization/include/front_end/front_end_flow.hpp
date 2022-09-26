@@ -28,6 +28,7 @@ namespace multisensor_localization
         /*构造函数完成初始化*/
         FrontEndFlow(ros::NodeHandle &nh);
         bool Run();
+        bool SaveMap();
 
     private:
         bool ReadData();

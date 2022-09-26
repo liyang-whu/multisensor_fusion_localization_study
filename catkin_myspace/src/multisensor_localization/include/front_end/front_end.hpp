@@ -30,7 +30,7 @@ namespace multisensor_localization
         /*构造函数 前端里程计初始化*/
         FrontEnd();
         /*yaml参数配置入口*/
-                bool InitWithConfig();
+        bool InitWithConfig();
         /*位姿更新*/
         bool Update(const CloudData&cloud_data,Eigen::Matrix4f &cloud_pose);
         /*设置初始位姿*/
@@ -38,11 +38,15 @@ namespace multisensor_localization
         /*获取当前、局部、全局点云*/
         bool GetCurrentScan(CloudData::CLOUD_PTR& current_map_ptr);
         bool GetNewLocalMap(CloudData::CLOUD_PTR& local_map_ptr);
+        bool GetNewGlobalMap(CloudData::CLOUD_PTR& global_map_ptr);
+        bool SaveMap();
+
 
         private:       
         /*更新关键帧*/
         bool UpdateNewFrame(const Frame&new_key_frame);
          /*各部分yaml参数配置*/
+        bool InitParam(const YAML::Node &config_node);
         bool InitDataPath(const YAML::Node &config_node);
         bool InitRegistration(shared_ptr<RegistrationInterface> &registeration_ptr, const YAML::Node &config_node);
         bool InitFilter(string filter_user, shared_ptr<CloudFilterInterface> &filter_ptr, const YAML::Node &config_node);
@@ -72,7 +76,7 @@ namespace multisensor_localization
         deque<Frame> global_map_frames_;
 
         int local_frame_num_=20;
-        float key_frame_distance=2.0;
+        float key_frame_distance_=2.0;
 
         bool has_new_local_map_=false;
         bool has_new_global_map_=false;

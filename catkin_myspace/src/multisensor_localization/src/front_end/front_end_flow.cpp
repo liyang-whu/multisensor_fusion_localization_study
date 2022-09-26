@@ -205,7 +205,7 @@ namespace multisensor_localization
         gnss_odom_pub_ptr_->Publish(gnss_odom_);
         laser_odom_pub_ptr_->Publish(laser_odom_);
 
-        if(front_end_ptr_->GetNewLocalMap(local_map_ptr_))
+        if (front_end_ptr_->GetNewLocalMap(local_map_ptr_))
         {
             local_map_pub_ptr_->Publish(local_map_ptr_);
         }
@@ -216,6 +216,10 @@ namespace multisensor_localization
         return true;
     }
 
+    bool FrontEndFlow::SaveMap()
+    {
+        return front_end_ptr_->SaveMap();
 
-    
+    }
+
 }
