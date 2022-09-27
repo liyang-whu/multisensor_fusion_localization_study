@@ -33,11 +33,12 @@ namespace multisensor_localization
 
     public:
         FrontEnd();
-  
+       bool SetInitPose(const Eigen::Matrix4f &init_pose);
         bool Update(const CloudData &cloud_data, Eigen::Matrix4f &cloud_pose);
-        bool SetInitPose(const Eigen::Matrix4f &init_pose);
+
         bool GetCurrentScan(CloudData::CLOUD_PTR &current_map_ptr);
         bool GetNewLocalMap(CloudData::CLOUD_PTR &local_map_ptr);
+        /*service server端调用以保存和显示全局地图*/
         bool GetNewGlobalMap(CloudData::CLOUD_PTR &global_map_ptr);
         bool SaveMap();
 
@@ -50,9 +51,6 @@ namespace multisensor_localization
 
         bool UpdateNewFrame(const Frame &new_key_frame);
     
-     
-      
-
     private:
         /*数据存放路径*/
         string data_path_ = "";

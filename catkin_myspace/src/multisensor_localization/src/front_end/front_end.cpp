@@ -199,31 +199,41 @@ namespace multisensor_localization
         return true;
     }
 
+    /**
+    @brief 设置激光里程计位姿原点
+    @note
+    @todo
+**/
+    bool FrontEnd::SetInitPose(const Eigen::Matrix4f &init_pose)
+    {
+        init_pose_ = init_pose;
+        return true;
+    }
+
+    /**
+    @brief 里程计更新
+    @note
+    @todo 位姿预测融合imu信息
+**/
     bool FrontEnd::Update(const CloudData &cloud_data, Eigen::Matrix4f &cloud_pose)
     {
+        /*拷贝时间戳*/
         current_frame_.cloud_data.time_stamp_ = cloud_data.time_stamp_;
         /*去除无效点云*/
         vector<int> indices;
-        pcl::removeNaNFromPointCloud(*cloud_data.cloud_ptr_, *current_frame_.cloud_data.cloud_ptr_, indices);
-        /*点云滤波*/
+        pcl::removeNaNFromPointCloud(*cloud_data.cloud_ptr_,
+                                     *current_frame_.cloud_data.cloud_ptr_,
+                                     indices);
+        /*点云滤波 降采样*/
         CloudData::CLOUD_PTR filtered_cloud_ptr_(new CloudData::CLOUD);
-        frame_filter_ptr_->Filter(current_frame_.cloud_data.cloud_ptr_, filtered_cloud_ptr_);
+        frame_filter_ptr_->Filter(current_frame_.cloud_data.cloud_ptr_,
+                                  filtered_cloud_ptr_);
 
-        // LOG(INFO) << endl
-        //           << fontColorGreen << ">> >> >> >> >> debug point >> >> >> >> >>" << endl
-        //           << fontColorYellow << "原始点云规模" << fontColorReset << endl
-        //           << fontColorBlue << (*cloud_data.cloud_ptr_).size() << fontColorReset << endl
-        //           << fontColorYellow << "去无效点后点云规模" << fontColorReset << endl
-        //           << fontColorBlue << (*current_frame_.cloud_data.cloud_ptr_).size() << fontColorReset << endl
-        //           << fontColorYellow << "降采样后点云规模" << fontColorReset << endl
-        //           << fontColorBlue << (*filtered_cloud_ptr_).size() << fontColorReset << endl
-        //           << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
-        //           << endl;
-
-        static Eigen::Matrix4f step_pose = Eigen::Matrix4f::Identity();
-        static Eigen::Matrix4f last_pose = init_pose_;
-        static Eigen::Matrix4f predict_pose = init_pose_;
-        static Eigen::Matrix4f last_key_frame_pose = init_pose_;
+        /*位姿预测所需的递推变量*/
+        static Eigen::Matrix4f step_pose = Eigen::Matrix4f::Identity(); // t-1到t时刻的步长增量
+        static Eigen::Matrix4f last_pose = init_pose_;                  // t-1时刻的位姿
+        static Eigen::Matrix4f predict_pose = init_pose_;               //预测的t+1时刻的位姿
+        static Eigen::Matrix4f last_key_frame_pose = init_pose_;        //上一关键帧的位姿
 
         /*当前局部地图为空时 初始化(使用初始位姿)*/
         if (local_map_frames_.size() == 0)
@@ -234,13 +244,14 @@ namespace multisensor_localization
         }
 
         /*当前局部地图不为空时 (匹配时用滤波后点云)*/
-        registration_ptr_->ScanMatch(filtered_cloud_ptr_,
-                                     predict_pose,
-                                     result_map_ptr_, //投影到laser_odom下的点云可显示
-                                     current_frame_.pose);
+        registration_ptr_->ScanMatch(filtered_cloud_ptr_,  //滤波后的点云
+                                     predict_pose,         //预测位姿
+                                     result_map_ptr_,      //转换到laser_odom下的点云
+                                     current_frame_.pose); //当前位姿势
+        /*通过传值给引用入参传递位姿势结果*/
         cloud_pose = current_frame_.pose;
 
-        /*更新两帧相对运动*/
+        /*更新两帧相对运动  为点云匹配计算出相对准确的初值以加快匹配速度*/
         step_pose = last_pose.inverse() * current_frame_.pose;
         predict_pose = current_frame_.pose * step_pose;
         last_pose = current_frame_.pose;
@@ -256,45 +267,41 @@ namespace multisensor_localization
             last_key_frame_pose = current_frame_.pose;
         }
 
-        LOG(INFO) << endl
-                  << fontColorGreen << ">> >> >> >> >> debug point >> >> >> >> >>" << endl
-                  << fontColorYellow << "激光里程计" << fontColorReset << endl
-                  << fontColorBlue << cloud_pose << fontColorReset << endl
-                  << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
-                  << endl;
+        // LOG(INFO) << endl
+        //           << fontColorGreen << ">> >> >> >> >> debug point >> >> >> >> >>" << endl
+        //           << fontColorYellow << "激光里程计" << fontColorReset << endl
+        //           << fontColorBlue << cloud_pose << fontColorReset << endl
+        //           << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
+        //           << endl;
 
         return true;
     }
 
-    bool FrontEnd::SetInitPose(const Eigen::Matrix4f &init_pose)
-    {
-        init_pose_ = init_pose;
-    }
-
     /**
-     * @brief 更新队列里的关键帧
-     * @note 关键输入的帧保证已知自身点云、位姿
-     * */
+    @brief 更新关键帧
+    @note 此时new_key_frame已含有位姿数据
+    @todo
+**/
     bool FrontEnd::UpdateNewFrame(const Frame &new_key_frame)
     {
         /*保存关键帧到硬盘中 节省内存*/
-        string file_path = data_path_ + "/key_frame/key_frame_" + to_string(global_map_frames_.size()) + ".pcd";
+        string file_path = data_path_ + "/key_frame/key_frame_" +\
+         to_string(global_map_frames_.size()) + ".pcd";
         pcl::io::savePCDFileBinary(file_path, *new_key_frame.cloud_data.cloud_ptr_);
 
         /*点云深拷贝*/
-        Frame key_frame = new_key_frame;
+        Frame key_frame = new_key_frame;//这样拷贝只能拷贝出指针 为浅拷贝
         key_frame.cloud_data.cloud_ptr_.reset(new CloudData::CLOUD(*new_key_frame.cloud_data.cloud_ptr_));
 
-        CloudData::CLOUD_PTR fransformed_cloud_ptr(new CloudData::CLOUD());
-
-        /*更新局部地图,维护局部地图规模不变*/
+        /*更新局部地图,维护局部地图帧数不变*/
         local_map_frames_.push_back(key_frame);
         while (local_map_frames_.size() > static_cast<size_t>(local_frame_num_))
         {
             local_map_frames_.pop_front();
         }
 
-        /*转换局部地图的坐标系到当前坐标系下*/
+        /*根据计算出的位姿转换原点处的点云到激光里程计下*/
+           CloudData::CLOUD_PTR fransformed_cloud_ptr(new CloudData::CLOUD());
         local_map_ptr_.reset(new CloudData::CLOUD());
         for (size_t i = 0; i < local_map_frames_.size(); i++)
         {
@@ -305,7 +312,7 @@ namespace multisensor_localization
         }
         has_new_local_map_ = true;
 
-        /*更新DNT匹配的目标点云*/
+        /*设置DNT匹配的目标点云 帧数太少不滤波*/
         if (local_map_frames_.size() < 10)
         {
             registration_ptr_->SetTarget(local_map_ptr_);
@@ -317,48 +324,53 @@ namespace multisensor_localization
             registration_ptr_->SetTarget(filtered_local_map_ptr);
         }
 
-        /*释放关键帧但保留位姿*/
+        /*关键帧已保存至容器,释放当前关键帧但保留位姿*/
         key_frame.cloud_data.cloud_ptr_.reset(new CloudData::CLOUD());
-        /*利用global_map_frames_.size记序号*/
+        /*利用global_map_frames_.size记序号和每帧位姿*/
         global_map_frames_.push_back(key_frame);
-    }
-
-    /**
-     * @brief 更新队列里的关键帧
-     * @note 关键输入的帧保证已知自身点云、位姿
-     * */
-    bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR &local_map_ptr)
-    {
-        if (has_new_local_map_ == true)
-        {
-            display_filter_ptr_->Filter(local_map_ptr_, local_map_ptr);
-        }
 
         return true;
     }
 
     /**
-     * @brief
-     * @note
-     * */
+    @brief 滤波当前扫描帧
+    @note
+    @todo
+**/
     bool FrontEnd::GetCurrentScan(CloudData::CLOUD_PTR &current_map_ptr)
     {
         display_filter_ptr_->Filter(result_map_ptr_, current_map_ptr);
         return true;
     }
 
+    /**
+    @brief 滤波局部地图
+    @note
+    @todo
+**/
+    bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR &local_map_ptr)
+    {
+        if (has_new_local_map_ == true)
+        {
+            display_filter_ptr_->Filter(local_map_ptr_, local_map_ptr);
+        }
+        return true;
+    }
+
+
+
     bool FrontEnd::SaveMap()
     {
         global_map_ptr_.reset(new CloudData::CLOUD());
-
         string key_frame_path = "";
-
         CloudData::CLOUD_PTR key_frame_cloud_ptr(new CloudData::CLOUD());
         CloudData::CLOUD_PTR transformed_cloud_ptr(new CloudData::CLOUD());
 
-        for (int i = 0; i < global_map_frames_.size(); i++)
+        /*硬盘中依次读取关键帧序列并集合至全局地图*/
+        for (unsigned int i = 0; i < global_map_frames_.size(); i++)
         {
-            key_frame_path = data_path_ + "/key_frame/key_frame_" + to_string(i) + ".pcd";
+            key_frame_path = data_path_ +\
+             "/key_frame/key_frame_" + to_string(i) + ".pcd";
             pcl::io::loadPCDFile(key_frame_path, *key_frame_cloud_ptr);
             pcl::transformPointCloud(*key_frame_cloud_ptr,
                                      *transformed_cloud_ptr,
@@ -366,7 +378,7 @@ namespace multisensor_localization
 
             *global_map_ptr_ += *transformed_cloud_ptr;
         }
-
+         /*保存全局地图至硬盘*/
         string map_file_path = data_path_ + "/map.pcd";
         pcl::io::savePCDFileBinary(map_file_path, *global_map_ptr_);
         has_new_global_map_ = true;
@@ -385,4 +397,6 @@ namespace multisensor_localization
         }
         return false;
     }
+
+ 
 }

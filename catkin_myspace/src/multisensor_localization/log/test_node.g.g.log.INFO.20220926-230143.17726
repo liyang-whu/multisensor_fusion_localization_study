@@ -1,8 +1,0 @@
-Log file created at: 2022/09/26 23:01:43
-Running on machine: g
-Running duration (h:mm:ss): 0:00:00
-Log line format: [IWEF]yyyymmdd hh:mm:ss.uuuuuu threadid file:line] msg
-I20220926 23:01:43.710004 17726 front_end.cpp:91] 
-[33mslam_data文件夹创建成功[0m
-[34m/media/g/T100/data[0m
-

@@ -35,6 +35,7 @@ namespace multisensor_localization
         FrontEndFlow(ros::NodeHandle &nh);
         bool Run();
         bool SaveMap();
+        bool PublishGlobalMap();
 
     private:
         bool ReadData();

@@ -54,13 +54,6 @@ namespace multisensor_localization
         if (!InitGnss())
             return false;
 
-        /*************************************************/
-        LOG(INFO) << endl
-                  << fontColorRedBold << "+++++++++++++++++++++" << endl
-                  << fontColorReset << endl;
-        ROS_BREAK();
-        /************************************************/
-
         while (HasData())
         {
             /*有效数据进行处理 无效数据直接跳过*/
@@ -133,23 +126,21 @@ namespace multisensor_localization
             gnss_data_origin.InitOriginPosition();
             gnss_inited = true;
 
-            origin_pub_ptr_->Publish(gnss_data_origin);
-
             LOG(INFO) << endl
                       << fontColorYellow << "gnss初始化完成" << fontColorReset << endl
                       << fontColorBlue << "经度" << gnss_data_origin.longtitude_ << fontColorReset << endl
                       << fontColorBlue << "纬度" << gnss_data_origin.latitude_ << fontColorReset << endl
                       << fontColorBlue << "海拔" << gnss_data_origin.altitude_ << fontColorReset << endl
                       << endl;
-
             DisplayProgress("【part2 传感器初始化完成】");
 
+            origin_pub_ptr_->Publish(gnss_data_origin);
         }
         return gnss_inited;
     }
 
     /**
-        @brief 检查数据队列中是否有数据
+        @brief 检查传感器队列中是否有数据
         @note
         @todo
     **/
@@ -167,11 +158,12 @@ namespace multisensor_localization
 
     /**
         @brief 提取有效数据
-        @note
-        @todo
+        @note 时间戳对齐
+        @todo 多传感器时间戳插值
     **/
     bool FrontEndFlow::ValidData()
     {
+        /*从传感器队列取出数据做当前数据*/
         current_cloud_data_ = cloud_data_buff_.front();
         current_imu_data_ = imu_data_buff_.front();
         current_gnss_data_ = gnss_data_buff_.front();
@@ -192,29 +184,44 @@ namespace multisensor_localization
             cloud_data_buff_.pop_front();
             return false;
         }
-
+        /*对齐已取出的情况下，丢弃旧数据*/
         cloud_data_buff_.pop_front();
         imu_data_buff_.pop_front();
         gnss_data_buff_.pop_front();
+
         return true;
     }
 
+    /**
+    @brief 更新gnss里程计
+    @note ?是否会有false的情况
+    @todo
+    **/
     bool FrontEndFlow::UpdateGnssOdom()
     {
+
         gnss_odom_ = Eigen::Matrix4f::Identity();
+        /*利用地理日志库更新东北天坐标系三轴位移*/
         current_gnss_data_.UpdateXYZ();
         gnss_odom_(0, 3) = current_gnss_data_.local_E_;
         gnss_odom_(1, 3) = current_gnss_data_.local_N_;
         gnss_odom_(2, 3) = current_gnss_data_.local_U_;
-
+        /*imu信息补充三轴旋转*/
         gnss_odom_.block<3, 3>(0, 0) = current_imu_data_.OrientationToRotation();
         gnss_odom_ *= lidar_to_imu_;
+
+        return true;
     }
 
+    /**
+    @brief 更新激光里程计
+    @note ?是否会有false的情况
+    @todo
+    **/
     bool FrontEndFlow::UpdateLaserOdom()
     {
 
-        /*利用gnss进行初始化*/
+        /*利用gnss初始位姿初始化激光里程计位姿*/
         static bool front_end_pose_inited = false;
         if (!front_end_pose_inited)
         {
@@ -233,28 +240,55 @@ namespace multisensor_localization
         /*更新激光里程计*/
         laser_odom_ = Eigen::Matrix4f::Identity();
         front_end_ptr_->Update(current_cloud_data_, laser_odom_);
+
         return true;
     }
 
+    /**
+    @brief 发布可视化信息
+    @note
+    @todo
+    **/
     bool FrontEndFlow::PublishData()
     {
+        /*里程计信息发布*/
         gnss_odom_pub_ptr_->Publish(gnss_odom_);
         laser_odom_pub_ptr_->Publish(laser_odom_);
-
+        /*发布当前扫描点云*/
+        front_end_ptr_->GetCurrentScan(current_scan_ptr_);
+        current_scan_pub_ptr_->Publish(current_scan_ptr_);
+        /*发布局部地图(当有更新时)*/
         if (front_end_ptr_->GetNewLocalMap(local_map_ptr_))
         {
             local_map_pub_ptr_->Publish(local_map_ptr_);
         }
 
-        front_end_ptr_->GetCurrentScan(current_scan_ptr_);
-        current_scan_pub_ptr_->Publish(current_scan_ptr_);
-
         return true;
     }
 
+    /**
+     @brief 保存地图
+     @note
+     @todo
+     **/
     bool FrontEndFlow::SaveMap()
     {
         return front_end_ptr_->SaveMap();
+    }
+
+    /**
+     @brief 发布全局地图
+     @note
+     @todo
+    **/
+    bool FrontEndFlow::PublishGlobalMap()
+    {
+        if (front_end_ptr_->GetNewGlobalMap(global_map_ptr_))
+        {
+            global_map_pub_ptr_->Publish(global_map_ptr_);
+            global_map_ptr_.reset(new CloudData::CLOUD());
+        }
+        return true;
     }
 
 }
