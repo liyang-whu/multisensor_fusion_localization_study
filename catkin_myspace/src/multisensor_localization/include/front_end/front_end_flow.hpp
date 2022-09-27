@@ -36,6 +36,7 @@ namespace multisensor_localization
         bool Run();
         bool SaveMap();
         bool PublishGlobalMap();
+        bool SaveTrajectory();
 
     private:
         bool ReadData();

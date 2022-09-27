@@ -291,4 +291,15 @@ namespace multisensor_localization
         return true;
     }
 
+        /**
+     @brief 发布全局地图
+     @note
+     @todo
+    **/
+    bool FrontEndFlow::SaveTrajectory()
+    {
+        //static
+        return true; 
+    }
+
 }
