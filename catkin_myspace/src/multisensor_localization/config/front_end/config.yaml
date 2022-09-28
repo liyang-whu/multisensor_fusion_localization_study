@@ -1,5 +1,5 @@
 #$ 数据存放路径
-data_path: /media/g/T100  #相对路径: ./  #相对路径:建议设置到外置固态移动硬盘上
+data_path: ./ #相对路径: ./  #相对路径:建议设置到外置固态移动硬盘上
 #$ 滤波方式
 local_map_filter: voxel_filter # 选择滑窗地图点云滤波方法，目前支持：voxel_filter
 display_filter: voxel_filter # rviz 实时显示点云时滤波方法，目前支持：voxel_filter

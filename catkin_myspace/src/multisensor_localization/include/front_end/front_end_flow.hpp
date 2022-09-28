@@ -25,6 +25,8 @@
 #include "../include/publisher/odom_publisher.hpp"
 #include "../include/publisher/cloud_publisher.hpp"
 #include "../include/publisher/origin_publisher.hpp"
+//文件生成
+#include "../include/tools/file_manager.h"
 
 namespace multisensor_localization
 {

@@ -45,7 +45,8 @@ namespace multisensor_localization
     bool FrontEndFlow::Run()
     {
         /*数据读取*/
-        ReadData();
+        if (!ReadData())
+            return false;
 
         /*传感器标定*/
         if (!Calibration())
@@ -63,9 +64,18 @@ namespace multisensor_localization
             /*更新gnss imu里程计*/
             UpdateGnssOdom();
             /*更新laser里程计*/
-            UpdateLaserOdom();
-            /*发布可视化信息*/
-            PublishData();
+            if (UpdateLaserOdom())
+            {
+
+                LOG(INFO) << endl
+                          << fontColorYellow << "激光里程计" << fontColorReset << endl
+                          << fontColorBlue << laser_odom_ << fontColorReset << endl
+                          << endl;
+                /*发布可视化信息*/
+                PublishData();
+                /*保存轨迹进行evo评估*/
+                SaveTrajectory();
+            }
         }
 
         return true;
@@ -199,7 +209,6 @@ namespace multisensor_localization
     **/
     bool FrontEndFlow::UpdateGnssOdom()
     {
-
         gnss_odom_ = Eigen::Matrix4f::Identity();
         /*利用地理日志库更新东北天坐标系三轴位移*/
         current_gnss_data_.UpdateXYZ();
@@ -228,20 +237,15 @@ namespace multisensor_localization
             front_end_pose_inited = true;
             front_end_ptr_->SetInitPose(gnss_odom_);
 
-            laser_odom_ = gnss_odom_;
-
             LOG(INFO) << endl
                       << fontColorYellow << "激光里程计初始化位姿" << fontColorReset << endl
-                      << fontColorBlue << laser_odom_ << fontColorReset << endl
+                      << fontColorBlue << gnss_odom_ << fontColorReset << endl
                       << endl;
-
-            return true;
+            return front_end_ptr_->Update(current_cloud_data_, laser_odom_);
         }
         /*更新激光里程计*/
         laser_odom_ = Eigen::Matrix4f::Identity();
-        front_end_ptr_->Update(current_cloud_data_, laser_odom_);
-
-        return true;
+        return front_end_ptr_->Update(current_cloud_data_, laser_odom_);
     }
 
     /**
@@ -291,15 +295,47 @@ namespace multisensor_localization
         return true;
     }
 
-        /**
-     @brief 发布全局地图
-     @note
-     @todo
+    /**
+     @brief 保存轨迹
+    @note evo评估对比
+    @todo
     **/
     bool FrontEndFlow::SaveTrajectory()
     {
-        //static
-        return true; 
+        /*创建文件夹及文件*/
+        static ofstream ground_truth_ofs, laser_odom_ofs;
+        static bool has_file_created = false;
+        if (!has_file_created)
+        {
+            string work_sapce_path = ros::package::getPath("multisensor_localization");
+            if (!FileManager::CreateDirectory(work_sapce_path + "/data/trajectory"))
+                return false;
+            if (!FileManager::CreateFile(ground_truth_ofs, work_sapce_path + "/data/trajectory/ground_truth.txt"))
+                return false;
+            if (!FileManager::CreateFile(laser_odom_ofs, work_sapce_path + "/data/trajectory/laser_odom.txt"))
+                return false;
+            has_file_created = true;
+        }
+        /*写入数据*/
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                ground_truth_ofs << gnss_odom_(i, j);
+                laser_odom_ofs << laser_odom_(i, j);
+                if (i == 2 && j == 3)
+                {
+                    ground_truth_ofs << endl;
+                    laser_odom_ofs << endl;
+                }
+                else
+                {
+                    ground_truth_ofs << " ";
+                    laser_odom_ofs << " ";
+                }
+            }
+        }
+        return true;
     }
 
 }

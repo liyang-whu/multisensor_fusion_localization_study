@@ -240,6 +240,8 @@ namespace multisensor_localization
         {
             current_frame_.pose = init_pose_;
             UpdateNewFrame(current_frame_);
+            /*通过传值给引用入参传递位姿势结果*/
+            cloud_pose = current_frame_.pose;
             return true;
         }
 
@@ -248,7 +250,7 @@ namespace multisensor_localization
                                      predict_pose,         //预测位姿
                                      result_map_ptr_,      //转换到laser_odom下的点云
                                      current_frame_.pose); //当前位姿势
-        /*通过传值给引用入参传递位姿势结果*/
+                                                           /*通过传值给引用入参传递位姿势结果*/
         cloud_pose = current_frame_.pose;
 
         /*更新两帧相对运动  为点云匹配计算出相对准确的初值以加快匹配速度*/
@@ -285,12 +287,12 @@ namespace multisensor_localization
     bool FrontEnd::UpdateNewFrame(const Frame &new_key_frame)
     {
         /*保存关键帧到硬盘中 节省内存*/
-        string file_path = data_path_ + "/key_frame/key_frame_" +\
-         to_string(global_map_frames_.size()) + ".pcd";
+        string file_path = data_path_ + "/key_frame/key_frame_" +
+                           to_string(global_map_frames_.size()) + ".pcd";
         pcl::io::savePCDFileBinary(file_path, *new_key_frame.cloud_data.cloud_ptr_);
 
         /*点云深拷贝*/
-        Frame key_frame = new_key_frame;//这样拷贝只能拷贝出指针 为浅拷贝
+        Frame key_frame = new_key_frame; //这样拷贝只能拷贝出指针 为浅拷贝
         key_frame.cloud_data.cloud_ptr_.reset(new CloudData::CLOUD(*new_key_frame.cloud_data.cloud_ptr_));
 
         /*更新局部地图,维护局部地图帧数不变*/
@@ -301,7 +303,7 @@ namespace multisensor_localization
         }
 
         /*根据计算出的位姿转换原点处的点云到激光里程计下*/
-           CloudData::CLOUD_PTR fransformed_cloud_ptr(new CloudData::CLOUD());
+        CloudData::CLOUD_PTR fransformed_cloud_ptr(new CloudData::CLOUD());
         local_map_ptr_.reset(new CloudData::CLOUD());
         for (size_t i = 0; i < local_map_frames_.size(); i++)
         {
@@ -336,7 +338,7 @@ namespace multisensor_localization
     @brief 滤波当前扫描帧
     @note
     @todo
-**/
+    **/
     bool FrontEnd::GetCurrentScan(CloudData::CLOUD_PTR &current_map_ptr)
     {
         display_filter_ptr_->Filter(result_map_ptr_, current_map_ptr);
@@ -347,7 +349,7 @@ namespace multisensor_localization
     @brief 滤波局部地图
     @note
     @todo
-**/
+    **/
     bool FrontEnd::GetNewLocalMap(CloudData::CLOUD_PTR &local_map_ptr)
     {
         if (has_new_local_map_ == true)
@@ -357,8 +359,11 @@ namespace multisensor_localization
         return true;
     }
 
-
-
+    /**
+    @brief 保存地图
+    @note
+    @todo
+    **/
     bool FrontEnd::SaveMap()
     {
         global_map_ptr_.reset(new CloudData::CLOUD());
@@ -369,8 +374,8 @@ namespace multisensor_localization
         /*硬盘中依次读取关键帧序列并集合至全局地图*/
         for (unsigned int i = 0; i < global_map_frames_.size(); i++)
         {
-            key_frame_path = data_path_ +\
-             "/key_frame/key_frame_" + to_string(i) + ".pcd";
+            key_frame_path = data_path_ +
+                             "/key_frame/key_frame_" + to_string(i) + ".pcd";
             pcl::io::loadPCDFile(key_frame_path, *key_frame_cloud_ptr);
             pcl::transformPointCloud(*key_frame_cloud_ptr,
                                      *transformed_cloud_ptr,
@@ -378,7 +383,7 @@ namespace multisensor_localization
 
             *global_map_ptr_ += *transformed_cloud_ptr;
         }
-         /*保存全局地图至硬盘*/
+        /*保存全局地图至硬盘*/
         string map_file_path = data_path_ + "/map.pcd";
         pcl::io::savePCDFileBinary(map_file_path, *global_map_ptr_);
         has_new_global_map_ = true;
@@ -386,6 +391,11 @@ namespace multisensor_localization
         return true;
     }
 
+    /**
+    @brief 得到全局地图
+    @note
+    @todo
+    **/
     bool FrontEnd::GetNewGlobalMap(CloudData::CLOUD_PTR &global_map_ptr)
     {
         if (has_new_global_map_ == true)
@@ -398,5 +408,4 @@ namespace multisensor_localization
         return false;
     }
 
- 
 }

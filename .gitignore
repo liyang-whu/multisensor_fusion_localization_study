@@ -3,6 +3,12 @@
 /catkin_myspace/build
 /catkin_myspace/devel
 /catkin_myspace/.vscode
-/catkin_myspace/log/
-/catkin_myspace/data/
 
+
+
+
+
+
+catkin_myspace/src/multisensor_localization/data/
+
+catkin_myspace/src/multisensor_localization/log/
