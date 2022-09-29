@@ -124,7 +124,6 @@ namespace multisensor_localization
             }
             sensor_inited = true;
         }
-
         return true;
     }
 

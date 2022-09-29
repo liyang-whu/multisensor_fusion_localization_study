@@ -8,7 +8,7 @@ shared_ptr<FrontEndFlow> front_end_flow_ptr;
 bool SaveMapCallBack(saveMap::Request &request, saveMap::Response &response)
 {
     response.succeed = front_end_flow_ptr->SaveMap();
-    //front_end_flow_ptr->PublishGlobalMap();
+    // front_end_flow_ptr->PublishGlobalMap();
 
     LOG(INFO) << endl
               << fontColorGreen << ">> >> >> >> >> debug point >> >> >> >> >>" << endl

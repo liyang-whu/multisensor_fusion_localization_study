@@ -75,7 +75,7 @@ using namespace std;
 		std::cout << "\33[1A";                                                                                                                \
 		std::cout << "[" + std::string(pa, '=') + ">" + std::string(50 - pa, ' ') << "]  " << progress * 100 << "%" << token[pa%7] << std::endl; \
 		fflush(stdout);                                                                                                                       \
-		usleep(5e4);                                                                                                                          \
+		usleep(5e3);                                                                                                                          \
 	}                                                                                                                                         \
 	cout << fontColorGreenBold << str << fontColorReset << endl                                                                               \
 		 << endl;
