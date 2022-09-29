@@ -25,6 +25,9 @@ namespace multisensor_localization
         public:
         void InitOriginPosition();
         void UpdateXYZ();
+          static   bool SyncData(deque<GnssData> &unsynced_data_buff,
+                           deque<GnssData> &synced_data_buff,
+                            double sync_time);
 
     };
 }

@@ -82,16 +82,48 @@ namespace multisensor_localization
     }
 
     /**
-     * @brief  从缓冲区读取到传感器数据队列中
-     * 点云 imu gnss
-     * @note
-     * @todo
+     * @brief  缓冲区读取传感器数据、时间同步
+     * @note 线性插值
+     * @todo 对四元数做球面插值
      **/
     bool FrontEndFlow::ReadData()
     {
+        /*读取缓冲区数据到未做时间同步的buff中*/
+        static deque<ImuData> unsynced_imu_data_buff;
+        static deque<GnssData> unsynced_gnss_data_buff;
+
         cloud_sub_ptr_->ParseData(cloud_data_buff_);
-        imu_sub_ptr_->ParseData(imu_data_buff_);
-        gnss_sub_ptr_->ParseData(gnss_data_buff_);
+        imu_sub_ptr_->ParseData(unsynced_imu_data_buff);
+        gnss_sub_ptr_->ParseData(unsynced_gnss_data_buff);
+
+        if (cloud_data_buff_.size() == 0)
+            return false;
+
+        /*时间同步*/
+        double refer_time = cloud_data_buff_.front().time_stamp_;
+        bool valid_imu_flag = ImuData::SyncData(unsynced_imu_data_buff,\
+         imu_data_buff_, refer_time);
+        bool valid_gnss_flag = GnssData::SyncData(unsynced_gnss_data_buff, \
+        gnss_data_buff_, refer_time);
+
+        LOG(INFO) << endl
+                  << fontColorWhiteBold << ">>-->>-->>--debug point-->>-->>-->>" << endl
+                  << fontColorYellow << "数据读取测试" << fontColorReset << endl
+                  << fontColorBlue << "valid_imu_flag" << valid_imu_flag << endl
+                  << fontColorBlue << "valid_gnss_flag" << valid_gnss_flag << endl
+                  << fontColorWhiteBold << "<<--<<--<<--debug point--<<--<<--<<" << endl
+                  << endl;
+        /*传感器初始化标志*/
+        static bool sensor_inited = false;
+        if (!sensor_inited)
+        {
+            if (!valid_gnss_flag || !valid_imu_flag)
+            {
+                cloud_data_buff_.pop_front();
+                return false;
+            }
+            sensor_inited = true;
+        }
 
         return true;
     }
