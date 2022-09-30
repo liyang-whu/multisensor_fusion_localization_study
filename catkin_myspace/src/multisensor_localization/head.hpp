@@ -13,6 +13,7 @@ using namespace std;
 #include "tf/transform_listener.h"
 #include "nav_msgs/Odometry.h"
 #include "ros/package.h"
+#include "geometry_msgs/TwistStamped.h"
 
 // pcl库(ros melodic自带版本1.8.1 )
 #include "pcl/point_types.h"

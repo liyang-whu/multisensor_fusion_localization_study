@@ -21,6 +21,7 @@
 #include "../include/subscriber/imu_subscriber.hpp"
 #include "../include/subscriber/gnss_subscriber.hpp"
 #include "../include/tf_listener/tf_listener.hpp"
+#include "../include/subscriber/velocity_subscriber.hpp"
 //话题发布
 #include "../include/publisher/odom_publisher.hpp"
 #include "../include/publisher/cloud_publisher.hpp"
@@ -57,7 +58,9 @@ namespace multisensor_localization
         shared_ptr<CloudSubscriber> cloud_sub_ptr_;
         shared_ptr<ImuSubscriber> imu_sub_ptr_;
         shared_ptr<GnssSubscriber> gnss_sub_ptr_;
+        shared_ptr<VelocitySubscriber>  velocity_sub_ptr_;
         shared_ptr<TfListener> lidar_to_imu_ptr_;
+
         /*话题发布*/
         shared_ptr<CloudPublisher> current_scan_pub_ptr_;
         shared_ptr<CloudPublisher> local_map_pub_ptr_;
@@ -78,10 +81,12 @@ namespace multisensor_localization
         deque<CloudData> cloud_data_buff_;
         deque<ImuData> imu_data_buff_;
         deque<GnssData> gnss_data_buff_;
+        deque<VelocityData> velocity_data_buff_;
         /*当前传感器数据*/
         CloudData current_cloud_data_;
         ImuData current_imu_data_;
         GnssData current_gnss_data_;
+        VelocityData current_velocity_data_;
     };
 
 } // namespace multisensor_localization

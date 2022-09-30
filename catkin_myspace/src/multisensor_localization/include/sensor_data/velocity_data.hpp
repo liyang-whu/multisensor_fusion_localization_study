@@ -1,4 +1,4 @@
-#ifndef  _VELOCITY_DATA_H
+#ifndef _VELOCITY_DATA_H
 #define _VELOCITY_DATA_H
 
 #include "../../head.hpp"
@@ -25,6 +25,7 @@ namespace multisensor_localization
         static bool SyncData(deque<VelocityData> &unsynced_data_buff,
                              deque<VelocityData> &synced_data_buff,
                              double sync_time);
+        void TransformCoordinate(Eigen::Matrix4f transform_matrix);
     };
 
 } // namespace multisensor_localization

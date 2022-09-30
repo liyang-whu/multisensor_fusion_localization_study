@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     {
         ros::spinOnce();
         front_end_flow_ptr->Run();
-        // rate.sleep();
+        rate.sleep();
     }
     return 0;
 }

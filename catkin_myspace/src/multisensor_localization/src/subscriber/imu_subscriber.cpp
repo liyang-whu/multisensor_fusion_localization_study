@@ -36,9 +36,12 @@ namespace multisensor_localization
         /*模拟类似串口缓冲区的机制*/
         if (new_imu_data_.size() > 0)
         {
-            imu_data_buff.insert(imu_data_buff.end(), new_imu_data_.begin(), new_imu_data_.end());
+            imu_data_buff.insert(imu_data_buff.end(),
+                                 new_imu_data_.begin(),
+                                 new_imu_data_.end());
+
             new_imu_data_.clear();
         }
     }
 
-}//multisensor_localization
+} // multisensor_localization
