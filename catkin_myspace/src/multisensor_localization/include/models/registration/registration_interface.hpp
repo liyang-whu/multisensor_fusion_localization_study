@@ -3,7 +3,7 @@
 //通用头文件
 #include "../../../head.hpp"
 //传感器数据类型
-#include "../include/sensor_data/cloud_data.hpp"
+#include "../../sensor_data/cloud_data.hpp"
 
 namespace multisensor_localization
 {

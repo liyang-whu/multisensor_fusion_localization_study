@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /Odometry1
+        - /Odometry2
         - /Odometry2/Shape1
         - /PointCloud23
       Splitter Ratio: 0.5
@@ -72,7 +74,7 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 0
       Name: Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -106,7 +108,7 @@ Visualization Manager:
           Value: true
         Value: true
       Enabled: true
-      Keep: 100
+      Keep: 0
       Name: Odometry
       Position Tolerance: 0.10000000149011612
       Shape:
@@ -153,8 +155,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 1.0200233459472656
-        Min Value: -12.511282920837402
+        Max Value: 0.10532617568969727
+        Min Value: -26.013423919677734
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -266,25 +268,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 172.0402374267578
+      Distance: 171.1107177734375
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 176.27906799316406
-        Y: 300.36334228515625
-        Z: 1.3684285879135132
+        X: 141.16104125976562
+        Y: 96.988037109375
+        Z: 11.139360427856445
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1047968864440918
+      Pitch: 1.3947964906692505
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.7154226303100586
+      Yaw: 4.335416793823242
     Saved: ~
 Window Geometry:
   Displays:
@@ -304,5 +306,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1853
-  X: 1987
+  X: 67
   Y: 27

@@ -15,15 +15,7 @@ namespace multisensor_localization
         /*排除异常状态*/
         while (unsynced_data_buff.size() >= 2)
         {
-            LOG(INFO) << endl
-                      << fontColorWhiteBold << ">>-->>-->>--debug point-->>-->>-->>" << endl
-                      << fontColorYellow << "SyncData测试" << fontColorReset << endl
-                      << fontColorBlue << "[0] " << unsynced_data_buff.at(0).time_stamp_ << endl
-                      << fontColorBlue << "[1] " << unsynced_data_buff.at(1).time_stamp_ << endl
-                      << fontColorBlue << "sync_time " << sync_time << endl
-                      << fontColorBlue << "[1]-[0] " << unsynced_data_buff.at(1).time_stamp_ - unsynced_data_buff.at(0).time_stamp_ << endl
-                      << fontColorWhiteBold << "<<--<<--<<--debug point--<<--<<--<<" << endl
-                      << endl;
+
             /*异常1:sync_time-->[0]-->[1]，无法同步*/
             if (unsynced_data_buff.at(0).time_stamp_ > sync_time)
                 return false;
@@ -126,7 +118,7 @@ namespace multisensor_localization
         linear_velocity_.x=v(0);
         linear_velocity_.x=v(1);
         linear_velocity_.x=v(2);
-
+        
     }
 
 } // namespace multisensor_localization

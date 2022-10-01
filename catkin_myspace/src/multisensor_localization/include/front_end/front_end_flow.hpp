@@ -28,7 +28,8 @@
 #include "../include/publisher/origin_publisher.hpp"
 //文件生成
 #include "../include/tools/file_manager.h"
-
+//点云矫正
+#include "../include/models/distortion_correction/distortion_correction.hpp"
 namespace multisensor_localization
 {
 
@@ -58,8 +59,10 @@ namespace multisensor_localization
         shared_ptr<CloudSubscriber> cloud_sub_ptr_;
         shared_ptr<ImuSubscriber> imu_sub_ptr_;
         shared_ptr<GnssSubscriber> gnss_sub_ptr_;
-        shared_ptr<VelocitySubscriber>  velocity_sub_ptr_;
+        shared_ptr<VelocitySubscriber> velocity_sub_ptr_;
         shared_ptr<TfListener> lidar_to_imu_ptr_;
+        /*点云矫正*/
+        shared_ptr<DistortionCorrection> distortion_correction_ptr_;
 
         /*话题发布*/
         shared_ptr<CloudPublisher> current_scan_pub_ptr_;

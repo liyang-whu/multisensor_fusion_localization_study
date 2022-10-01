@@ -268,14 +268,7 @@ namespace multisensor_localization
             UpdateNewFrame(current_frame_);
             last_key_frame_pose = current_frame_.pose;
         }
-
-        // LOG(INFO) << endl
-        //           << fontColorGreen << ">> >> >> >> >> debug point >> >> >> >> >>" << endl
-        //           << fontColorYellow << "激光里程计" << fontColorReset << endl
-        //           << fontColorBlue << cloud_pose << fontColorReset << endl
-        //           << fontColorGreen << "<< << << << <<  debug point << << << << <<" << endl
-        //           << endl;
-
+        
         return true;
     }
 

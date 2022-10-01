@@ -30,7 +30,7 @@ namespace multisensor_localization
         origin_pub_ptr_ = make_shared<OriginPublisher>(nh, "ref_point_wgs84", 100, "map");
         gnss_odom_pub_ptr_ = make_shared<OdomPublisher>(nh, "gnss_odom", "map", "lidar", 100);
         laser_odom_pub_ptr_ = make_shared<OdomPublisher>(nh, "lidar_odom", "map", "lidar", 100);
-
+         distortion_correction_ptr_ = std::make_shared<DistortionCorrection>();
         /*前端里程计*/
         front_end_ptr_ = make_shared<FrontEnd>();
         /*重置地图指针*/
@@ -117,7 +117,7 @@ namespace multisensor_localization
         static bool sensor_inited = false;
         if (!sensor_inited)
         {
-            if (!valid_gnss_flag || !valid_imu_flag||!valid_velocity_flag)
+            if (!valid_gnss_flag || !valid_imu_flag || !valid_velocity_flag)
             {
                 cloud_data_buff_.pop_front();
                 return false;
@@ -193,8 +193,8 @@ namespace multisensor_localization
             return false;
         if (gnss_data_buff_.size() == 0)
             return false;
-        if(velocity_data_buff_.size()==0)
-        return false;
+        if (velocity_data_buff_.size() == 0)
+            return false;
 
         return true;
     }
@@ -210,7 +210,7 @@ namespace multisensor_localization
         current_cloud_data_ = cloud_data_buff_.front();
         current_imu_data_ = imu_data_buff_.front();
         current_gnss_data_ = gnss_data_buff_.front();
-        current_velocity_data_=velocity_data_buff_.front();
+        current_velocity_data_ = velocity_data_buff_.front();
 
         double d_time = current_cloud_data_.time_stamp_ - current_imu_data_.time_stamp_;
 
@@ -265,9 +265,12 @@ namespace multisensor_localization
     **/
     bool FrontEndFlow::UpdateLaserOdom()
     {
-           /*计算出雷达坐标系下的线速度、加速度*/
-        current_velocity_data_.TransformCoordinate(lidar_to_imu_);
-        
+         /*计算出雷达坐标系下的线速度、加速度*/
+       // current_velocity_data_.TransformCoordinate(lidar_to_imu_);
+        /*点云畸变矫正*/
+        //distortion_correction_ptr_->SetMotionParam(0.1, current_velocity_data_);
+        //distortion_correction_ptr_->AdjustCloud(current_cloud_data_.cloud_ptr_,
+                                             //   current_cloud_data_.cloud_ptr_);
         /*利用gnss初始位姿初始化激光里程计位姿*/
         static bool front_end_pose_inited = false;
         if (!front_end_pose_inited)

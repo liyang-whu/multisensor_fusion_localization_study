@@ -57,5 +57,4 @@ namespace multisensor_localization
         return true;
     }
 
-
 }
