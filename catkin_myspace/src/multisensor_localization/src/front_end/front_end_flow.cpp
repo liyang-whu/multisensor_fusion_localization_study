@@ -266,11 +266,11 @@ namespace multisensor_localization
     bool FrontEndFlow::UpdateLaserOdom()
     {
          /*计算出雷达坐标系下的线速度、加速度*/
-       // current_velocity_data_.TransformCoordinate(lidar_to_imu_);
+      // current_velocity_data_.TransformCoordinate(lidar_to_imu_.inverse());
         /*点云畸变矫正*/
         //distortion_correction_ptr_->SetMotionParam(0.1, current_velocity_data_);
         //distortion_correction_ptr_->AdjustCloud(current_cloud_data_.cloud_ptr_,
-                                             //   current_cloud_data_.cloud_ptr_);
+                                              // current_cloud_data_.cloud_ptr_);
         /*利用gnss初始位姿初始化激光里程计位姿*/
         static bool front_end_pose_inited = false;
         if (!front_end_pose_inited)
