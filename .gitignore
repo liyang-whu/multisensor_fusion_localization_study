@@ -1,14 +1,6 @@
 # Prerequisites
-/catkin_demo
 /catkin_myspace/build
 /catkin_myspace/devel
 /catkin_myspace/.vscode
 
 
-
-
-
-
-catkin_myspace/src/multisensor_localization/data/
-
-catkin_myspace/src/multisensor_localization/log/
