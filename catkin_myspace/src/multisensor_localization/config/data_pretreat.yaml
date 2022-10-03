@@ -1,0 +1,4 @@
+cloud_sub_topic: /kitti/velo/pointcloud
+imu_sub_topic: /kitti/oxts/imu
+velocity_sub_topic: /kitti/oxts/gps/vel
+gnss_sub_topic: /kitti/oxts/gps/fix

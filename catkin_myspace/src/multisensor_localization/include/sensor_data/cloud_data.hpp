@@ -1,8 +1,8 @@
 /*
- * @Description: 自定义的点云数据类型
- * @Author: Robotics gang
- * @note  modified from Ren Qian
- * @Date: 2022-10-02
+ * @Description:
+ * @Author: Robotic Gang
+ * @Note:Modified from Ren Qian
+ * @Date: 2022-10-03
  */
 
 #ifndef CLOUD_DATA_HPP_
@@ -13,20 +13,20 @@
 
 namespace multisensor_localization
 {
-    class CloudData
-    {
-    public:
-        using POINT = pcl::PointXYZ;
-        using CLOUD = pcl::PointCloud<POINT>;
-        using CLOUD_PTR = CLOUD::Ptr;
+  class CloudData
+  {
+  public:
+    using POINT = pcl::PointXYZ;
+    using CLOUD = pcl::PointCloud<POINT>;
+    using CLOUD_PTR = CLOUD::Ptr;
 
-    public:
-        CloudData();
-
-    public:
-        double time_stamp_ = 0.0;
-        CLOUD_PTR cloud_ptr_;
-    };
-} // namespace multisensor_localization
+  public:
+    CloudData();
+    
+  public:
+    double time_stamp_= 0.0;
+    CLOUD_PTR cloud_ptr_;
+  };
+} // namespace multisensor_localization 
 
 #endif

@@ -35,5 +35,5 @@ list(REMOVE_ITEM  ALL_SRCS  ${NODE_SRCS})
 
 
 #链接编译
-add_executable(data_preprocess_node src/app/data_preprocess_node.cpp ${ALL_SRCS} )
-target_link_libraries(data_preprocess_node ${catkin_LIBRARIES} ${THIRD_PART_LIBRARIES})
+add_executable(data_pretreat_node src/app/data_pretreat_node.cpp ${ALL_SRCS} )
+target_link_libraries(data_pretreat_node ${catkin_LIBRARIES} ${THIRD_PART_LIBRARIES})

@@ -1,2 +1,2 @@
 source devel/setup.bash
-rosrun multisensor_localization data_preprocess_node
+rosrun multisensor_localization data_pretreat_node

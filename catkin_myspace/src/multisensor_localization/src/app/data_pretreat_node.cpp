@@ -1,6 +1,7 @@
 /*
  * @Description: 数据预处理的node文件
- * @Author: Robotics gang
+ * @Author: Robotic Gang
+ * @Function:
  * @note  modified from Ren Qian
  * @Date: 2022-10-02
  */
@@ -13,6 +14,7 @@
 // debug自定义工具
 #include "../../include/debug_tools/debug_tools.hpp"
 using namespace debug_tools;
+
 int main(int argc, char **argv)
 {
     /*ros系统配置*/
@@ -30,7 +32,7 @@ int main(int argc, char **argv)
     ros::Rate rate(100);
     while (ros::ok())
     {
-            DebugTools::Debug_Info("循环进行中");
+        DebugTools::Debug_Info("循环进行中");
 
         rate.sleep();
     }
