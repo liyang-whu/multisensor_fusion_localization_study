@@ -1,5 +1,5 @@
 /*
- * @Description: 点云发布器
+ * @Description: 里程计发布器
  * @Author: Robotics gang
  * @note  modified from Ren Qian
  * @Date: 2022-10-02

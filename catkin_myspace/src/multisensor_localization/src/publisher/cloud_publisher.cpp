@@ -37,3 +37,4 @@ namespace multisensor_localization
         publisher_.publish(*cloud_output_ptr);
     }
 }
+
