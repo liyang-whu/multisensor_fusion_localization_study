@@ -4,7 +4,7 @@
  * @note  modified from Ren Qian
  * @Date: 2022-10-02
  */
-#include <string.h>
+#include <ros/ros.h>
 #include "glog/logging.h"
 
 namespace debug_tools

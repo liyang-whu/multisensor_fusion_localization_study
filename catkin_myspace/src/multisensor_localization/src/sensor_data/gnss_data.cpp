@@ -7,7 +7,7 @@
  */
 
 #include "../../include/sensor_data/gnss_data.hpp"
-#include "glog/logging.h"
+
 
 namespace multisensor_localization
 {
@@ -35,7 +35,7 @@ namespace multisensor_localization
     {
         if (!origin_position_inited_)
         {
-            //!!!TODO警告输出
+            debug_tools::DebugTools::Debug_Error("东北天坐标系未初始化");
         }
         geo_converter_.Forward(latitude_, longitude_, altitude_,
                                local_E_, local_N_, local_U_);

@@ -10,7 +10,10 @@
 
 #include <deque>
 
-#include "GeographicLib/LocalCartesian.hpp"
+#include <GeographicLib/LocalCartesian.hpp>
+#include <glog/logging.h>
+#include "../debug_tools/debug_tools.hpp"
+
 
 namespace multisensor_localization
 {
