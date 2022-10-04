@@ -75,7 +75,7 @@ namespace multisensor_localization
     }
     /**
      * @brief 臂杆速度传递
-     * @note ???存疑
+     * @note ???似乎是有问题的
      * @todo
      **/
     void VelocityData::TransformCoordinate(Eigen::Matrix4f transform_matrix)
