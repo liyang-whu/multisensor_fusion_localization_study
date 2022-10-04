@@ -4,10 +4,12 @@
  * @note  modified from Ren Qian
  * @Date: 2022-10-02
  */
-#include <ros/ros.h>
-#include "glog/logging.h"
+#ifndef DEBUG_TOOLS_HPP_
+#define DEBUG_TOOLS_HPP_
 
-namespace debug_tools
+#include <ros/ros.h>
+
+namespace multisensor_localization
 {
 
 /*终端彩色字体*/
@@ -33,12 +35,10 @@ namespace debug_tools
         {
         public:
                 static void Debug_Info(const std::string str);
-                static void Debug_Info(const std::string str,const std::string value1);
-                static void Debug_Info(const std::string str, const double value1);
-                static void Debug_Info(const std::string str, const double value1, const double value2);
-                static void Debug_Info(const std::string str, const double value1, const double value2, const double value3);
-                static void Debug_Info(const std::string str, const double value1, const double value2, const double value3,const double value4);
+                static void Debug_Warn(const std::string str);
                 static void Debug_Error(const std::string str);
         };
 
 }
+
+#endif

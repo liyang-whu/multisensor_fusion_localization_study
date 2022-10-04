@@ -8,70 +8,40 @@
 
 #include "../../include/debug_tools/debug_tools.hpp"
 
-namespace debug_tools
+namespace multisensor_localization
 {
     /**
      * @brief 终端输出提示
-     * @note 以重载形式适配不定参数
+     * @note 
      * @todo
      **/
     void DebugTools::Debug_Info(std::string str)
     {
-        LOG(INFO) << std::endl
+        std::cout << std::endl
                   << fontColorGreen << str << fontColorReset << std::endl;
     }
 
-    void DebugTools::Debug_Info(const std::string str, const std::string value1)
+    /**
+     * @brief 终端输出警告
+     * @note
+     * @todo
+     **/
+    void DebugTools::Debug_Warn(const std::string str)
     {
-        LOG(INFO) << std::endl
-                  << fontColorGreen << str << fontColorReset << std::endl
-                  << fontColorBlue << value1 << fontColorReset << std::endl;
-    }
-
-    void DebugTools::Debug_Info(const std::string str, const double value1)
-    {
-        LOG(INFO) << std::endl
-                  << fontColorGreen << str << fontColorReset << std::endl
-                  << fontColorBlue << value1 << fontColorReset << std::endl;
-    }
-
-    void DebugTools::Debug_Info(const std::string str, const double value1, const double value2)
-    {
-        LOG(INFO) << std::endl
-                  << fontColorGreen << str << fontColorReset << std::endl
-                  << fontColorBlue << value1 << fontColorReset << std::endl
-                  << fontColorBlue << value2 << fontColorReset << std::endl;
-    }
-
-    void DebugTools::Debug_Info(const std::string str, const double value1, const double value2, const double value3)
-    {
-        LOG(INFO) << std::endl
-                  << fontColorGreen << str << fontColorReset << std::endl
-                  << fontColorBlue << value1 << fontColorReset << std::endl
-                  << fontColorBlue << value2 << fontColorReset << std::endl
-                  << fontColorBlue << value3 << fontColorReset << std::endl;
-    }
-
-    void DebugTools::Debug_Info(const std::string str, const double value1, const double value2, const double value3, const double value4)
-    {
-        LOG(INFO) << std::endl
-                  << fontColorGreen << str << fontColorReset << std::endl
-                  << fontColorBlue << value1 << fontColorReset << std::endl
-                  << fontColorBlue << value2 << fontColorReset << std::endl
-                  << fontColorBlue << value3 << fontColorReset << std::endl
-                  << fontColorBlue << value4 << fontColorReset << std::endl;
+        std::cout<< std::endl
+                  << fontColorYellow << str << fontColorReset << std::endl;
     }
 
     /**
      * @brief 终端输出错误
-     * @note 
+     * @note
      * @todo
      **/
     void DebugTools::Debug_Error(std::string str)
     {
-        LOG(INFO) << std::endl
+        std::cout<< std::endl
                   << fontColorRed << str << fontColorReset << std::endl;
         ROS_BREAK();
     }
 
-}
+} // namespace multisensor_localization

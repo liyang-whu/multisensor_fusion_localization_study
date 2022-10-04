@@ -13,12 +13,14 @@
 #include <glog/logging.h>
 // debug自定义工具
 #include "../../include/debug_tools/debug_tools.hpp"
-using namespace debug_tools;
+#include "../../include/data_pretreat/data_pretreat_flow.hpp"
+
+using namespace multisensor_localization;
 
 int main(int argc, char **argv)
 {
     /*ros系统配置*/
-    ros::init(argc, argv, "data_preprocess_node");
+    ros::init(argc, argv, "data_pretreat_node");
     ros::NodeHandle nh;
 
     /*glog配置*/
@@ -28,12 +30,13 @@ int main(int argc, char **argv)
     FLAGS_alsologtostderr = 1;
 
     /*数据预处理流程指针*/
+    std::shared_ptr<DataPretreatFlow> data_pretreat_flow_ptr = std::make_shared<DataPretreatFlow>(nh);
 
-    ros::Rate rate(100);
+    ros::Rate rate(10);
     while (ros::ok())
     {
-        DebugTools::Debug_Info("循环进行中");
-
+        ros::spinOnce();
+        data_pretreat_flow_ptr->Run();
         rate.sleep();
     }
     return 0;

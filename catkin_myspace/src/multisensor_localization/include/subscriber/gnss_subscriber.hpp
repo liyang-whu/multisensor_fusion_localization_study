@@ -5,8 +5,8 @@
  * @Date: 2022-10-03
  */
 
-#ifndef CLOUD_SUBSCRIBER_HPP_
-#define CLOUD_SUBSCRIBER_HPP_
+#ifndef   GNSS_SUBSCRIBER_HPP_
+#define  GNSS_SUBSCRIBER_HPP_
 
 #include <deque>
 #include <ros/ros.h>
