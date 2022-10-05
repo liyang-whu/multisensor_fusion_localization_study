@@ -13,7 +13,7 @@ Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)
 ## 3.环境配置
 ROS melodic  
 yaml-cpp 6.0  
-google glog
+google glog  
 GeographicLib  
 
 (安装上述第三方库有遇到问题也可参考[机器人开发常见第三方库、软件安装和使用](https://blog.csdn.net/weixin_37684239/article/details/126568335?spm=1001.2014.3001.5501))
