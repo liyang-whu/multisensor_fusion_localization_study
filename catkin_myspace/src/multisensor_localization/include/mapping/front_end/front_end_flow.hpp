@@ -10,8 +10,9 @@
 
 #include <ros/ros.h>
 
-#include "../subscriber/cloud_subscriber.hpp"
-#include "../publisher/odometry_publisher.hpp"
+#include "../../subscriber/cloud_subscriber.hpp"
+#include "../../publisher/odometry_publisher.hpp"
+#include <glog/logging.h>
 
 namespace multisensor_localization
 {

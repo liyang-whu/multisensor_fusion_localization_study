@@ -244,6 +244,7 @@ namespace multisensor_localization
         /*点云畸变矫正*/
         // current_velocity_data_.TransformCoordinate(lidar_to_imu_.inverse());
         //! TODO 畸变矫正变换似乎有问题 暂时跳过
+        return true;
     }
 
     /**
