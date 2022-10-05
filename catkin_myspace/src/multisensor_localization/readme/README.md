@@ -24,3 +24,6 @@ rostopic echo /synced_cloud |grep frame_id
 + 2022.10.3  
 第三次重构框架搭建  
 sensor_data完成部分
++ 2022.10.4    
+节点data_pretreat_node完成(未测试)  
+节点front_end_node完成(未测试)

@@ -97,8 +97,7 @@ namespace multisensor_localization
         return true;
     }
 
-
-       /**
+    /**
      * @brief  设置初始位姿
      * @note
      * @todo
@@ -142,12 +141,12 @@ namespace multisensor_localization
         /*直接匹配(非第一帧)*/
         CloudData::CLOUD_PTR result_cloud_ptr(new CloudData::CLOUD());
         registration_ptr_->ScanMatch(filtered_cloud_ptr, predict_pose, result_cloud_ptr, current_frame_.pose_);
-        cloud_pose = current_frame_.pose_;
+        cloud_pose = current_frame_.pose_;//引用取参值
 
         /*更新相邻两帧的相对运动*/
         step_pose = last_pose.inverse() * current_frame_.pose_;
         predict_pose = current_frame_.pose_ * step_pose;
-        last_pose = current_frame_.pose_; //引用取参值
+        last_pose = current_frame_.pose_; 
 
         /*是否更新关键帧*/
         if (fabs(last_key_frame_pose(0, 3) - current_frame_.pose_(0, 3)) +
@@ -161,7 +160,6 @@ namespace multisensor_localization
 
         return true;
     }
- 
 
     /**
      * @brief  更新新关键帧
