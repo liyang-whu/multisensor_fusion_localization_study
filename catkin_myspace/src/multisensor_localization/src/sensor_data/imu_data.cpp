@@ -28,7 +28,7 @@ namespace multisensor_localization
 
     /**
      * @brief 时间同步
-     * @note
+     * @note 时间戳为ms+ns
      * @todo
      **/
     bool ImuData::SyncData(std::deque<ImuData> &unsynced_data_buff, std::deque<ImuData> &synced_data_buff, double sync_time)

@@ -1,5 +1,5 @@
 /*
- * @Description: 数据预处理的node文件
+ * @Description: 前端里程计节点
  * @Author: Robotic Gang
  * @Function:
  * @note  modified from Ren Qian
@@ -14,7 +14,7 @@
 // debug自定义工具
 #include "../../include/debug_tools/debug_tools.hpp"
 //数据处理流程控制
-#include "../../include/data_pretreat/data_pretreat_flow.hpp"
+
 
 using namespace multisensor_localization;
 
@@ -31,13 +31,13 @@ int main(int argc, char **argv)
     FLAGS_alsologtostderr = 1;
 
     /*数据预处理流程指针*/
-    std::shared_ptr<DataPretreatFlow> data_pretreat_flow_ptr = std::make_shared<DataPretreatFlow>(nh);
+    //std::shared_ptr<DataPretreatFlow> data_pretreat_flow_ptr = std::make_shared<DataPretreatFlow>(nh);
 
     ros::Rate rate(10);
     while (ros::ok())
     {
         ros::spinOnce();
-        data_pretreat_flow_ptr->Run();
+       // data_pretreat_flow_ptr->Run();
         rate.sleep();
     }
     return 0;

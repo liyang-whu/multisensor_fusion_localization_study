@@ -58,8 +58,13 @@ namespace multisensor_localization
 
         Eigen::Matrix4f lidar_to_imu_ = Eigen::Matrix4f::Identity();
         Eigen::Matrix4f gnss_pose_ = Eigen::Matrix4f::Identity();
-        
-     YAML::Node config_node_;
+
+        YAML::Node config_node_;
+
+        CloudData current_cloud_data_;
+        ImuData current_imu_data_;
+        VelocityData current_velocity_data_;
+        GnssData current_gnss_data_;
     };
 
 } // namespace multisensor_localization

@@ -43,24 +43,24 @@ namespace multisensor_localization
         /*读取数据并同步时间*/
         if (!ReadData())
         {
-            DebugTools::Debug_Warn("未能完成多传感器时间同步");
             return false;
         }
         /*多传感器空间标定*/
         if (!InitCalibration())
         {
-            DebugTools::Debug_Warn("未能完成多传感器空间标定");
             return false;
         }
         /*初始化gnss东北天坐标系*/
         if (!InitGNSS())
         {
-            DebugTools::Debug_Warn("gnss东北天坐标系原点已设定");
             return false;
         }
         while (HasData())
         {
-            //提取有效数据
+            if (!ValidData())
+                continue;
+            TransformData();
+            PublishData();
         }
         return true;
     }
@@ -114,11 +114,11 @@ namespace multisensor_localization
      **/
     bool DataPretreatFlow::InitCalibration()
     {
-        std::string config_file_path = ros::package::getPath("multisensor_localization") + "/config/data_pretreat.yaml";
-        YAML::Node config_node = YAML::LoadFile(config_file_path);
         static bool calibration_finished = false;
         if (!calibration_finished)
         {
+            std::string config_file_path = ros::package::getPath("multisensor_localization") + "/config/data_pretreat.yaml";
+            YAML::Node config_node = YAML::LoadFile(config_file_path);
             lidar_to_imu_ = Eigen::Map<Eigen::Matrix<float, 4, 4, Eigen::RowMajor>>(config_node_["calibration_param"]["lidar_to_imu"].as<std::vector<float>>().data());
             LOG(INFO) << std::endl
                       << "[lidar_to_imu]" << std::endl
@@ -171,4 +171,91 @@ namespace multisensor_localization
         return true;
     }
 
+    /**
+     * @brief 检查数据有效性
+     * @note 主要检查时间戳同步程度
+     * @todo
+     **/
+    bool DataPretreatFlow::ValidData()
+    {
+        /*取出头数据*/
+        current_cloud_data_ = cloud_data_buff_.front();
+        current_imu_data_ = imu_data_buff_.front();
+        current_velocity_data_ = velocity_data_buff_.front();
+        current_gnss_data_ = gnss_data_buff_.front();
+        /*时间戳同步程度校验 时间戳滞后数据丢掉*/
+        double diff_imu_time = current_cloud_data_.time_stamp_ - current_imu_data_.time_stamp_;
+        double diff_velocity_time = current_cloud_data_.time_stamp_ - current_velocity_data_.time_stamp_;
+        double diff_gnss_time = current_cloud_data_.time_stamp_ - current_gnss_data_.time_stamp_;
+
+        if (diff_imu_time < -0.05 || diff_velocity_time < -0.05 || diff_gnss_time < -0.05)
+        {
+            cloud_data_buff_.pop_front();
+            return false;
+        }
+        if (diff_imu_time > 0.05)
+        {
+            imu_data_buff_.pop_front();
+            return false;
+        }
+
+        if (diff_velocity_time > 0.05)
+        {
+            velocity_data_buff_.pop_front();
+            return false;
+        }
+
+        if (diff_gnss_time > 0.05)
+        {
+            gnss_data_buff_.pop_front();
+            return false;
+        }
+        /*弹出已取的头数据*/
+        cloud_data_buff_.pop_front();
+        imu_data_buff_.pop_front();
+        velocity_data_buff_.pop_front();
+        gnss_data_buff_.pop_front();
+
+        LOG(INFO) << std::endl
+                  << "[time_stamp]" << std::endl
+                  << "current_cloud_data \t " << std::fixed << current_cloud_data_.time_stamp_ << std::endl
+                  << "current_imu_data \t" << std::fixed << current_imu_data_.time_stamp_ << std::endl
+                  << "current_velocity_data \t" << std::fixed << current_velocity_data_.time_stamp_ << std::endl
+                  << "current_gnss_data \t" << std::fixed << current_gnss_data_.time_stamp_ << std::endl;
+
+        return true;
+    }
+
+    /**
+     * @brief 数据坐标系转换
+     * @note
+     * @todo
+     **/
+    bool DataPretreatFlow::TransformData()
+    {
+        /*gnss位姿转换*/
+        gnss_pose_ = Eigen::Matrix4f::Identity();
+        current_gnss_data_.UpdateXYZ();
+        gnss_pose_(0, 3) = current_gnss_data_.local_E_;
+        gnss_pose_(1, 3) = current_gnss_data_.local_N_;
+        gnss_pose_(2, 3) = current_gnss_data_.local_U_;
+        gnss_pose_.block<3, 3>(0, 0) = current_imu_data_.OrientationToMatrix();
+        gnss_pose_ *= lidar_to_imu_;
+        /*点云畸变矫正*/
+        // current_velocity_data_.TransformCoordinate(lidar_to_imu_.inverse());
+        //! TODO 畸变矫正变换似乎有问题 暂时跳过
+    }
+
+    /**
+     * @brief 数据发布到前端
+     * @note
+     * @todo
+     **/
+    bool DataPretreatFlow::PublishData()
+    {
+        cloud_pub_ptr_->Publish(current_cloud_data_.cloud_ptr_, current_cloud_data_.time_stamp_);
+        gnss_pub_ptr_->Publish(gnss_pose_, current_gnss_data_.time_stamp_);
+
+        return true;
+    }
 } // namespace multisensor_localization
