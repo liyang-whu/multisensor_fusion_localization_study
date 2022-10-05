@@ -51,6 +51,12 @@ namespace multisensor_localization
         ndt_ptr_->setTransformationEpsilon(trans_eps);
         ndt_ptr_->setMaximumIterations(max_iter);
 
+        LOG(INFO) << std::endl
+                  << "[NdtRegistration_param]" << std::endl
+                  << "res \t" << res << std::endl
+                  << "step_size \t" << step_size << std::endl
+                  << "trans_eps \t" << trans_eps << std::endl
+                  << "max_iter \t" << max_iter << std::endl;
         return true;
     }
 
@@ -65,6 +71,12 @@ namespace multisensor_localization
 
         return true;
     }
+
+    /**
+     * @brief 点云匹配
+     * @note
+     * @todo
+     **/
     bool NdtRegistration::ScanMatch(const CloudData::CLOUD_PTR &input_cloud_ptr,
                                     const Eigen::Matrix4f &predict_pose,
                                     CloudData::CLOUD_PTR &result_cloud_ptr,
