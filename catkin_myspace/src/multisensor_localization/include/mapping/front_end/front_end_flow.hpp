@@ -12,6 +12,7 @@
 
 #include "../../subscriber/cloud_subscriber.hpp"
 #include "../../publisher/odometry_publisher.hpp"
+#include "../../mapping/front_end/front_end.hpp"
 #include <glog/logging.h>
 
 namespace multisensor_localization
@@ -33,9 +34,10 @@ namespace multisensor_localization
     private:
         std::shared_ptr<CloudSubscriber> cloud_sub_ptr_;
         std::shared_ptr<OdometryPublisher> laser_odom_pub_ptr_;
-        //std::shared_ptr<FrontEnd> front_end_ptr_;
+
 
         std::deque<CloudData> cloud_data_buff_;
+      std::shared_ptr<FrontEnd> front_end_ptr_;
 
         CloudData current_cloud_data_;
 
