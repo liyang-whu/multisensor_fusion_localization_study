@@ -28,6 +28,7 @@ namespace multisensor_localization
         /*话题发送*/
         cloud_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "/synced_cloud", "/velo_link", 100);
         gnss_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "/synced_gnss", "/map", "/velo_link", 100);
+        origin_pub_ptr_ = std::make_shared<OriginPublisher>(nh, "ref_point_wgs84", 100, "map");
         /*畸变矫正*/
 
         /*just a test*/
@@ -148,6 +149,8 @@ namespace multisensor_localization
                       << "[ENU origin point]" << std::endl
                       << "longitude \t" << gnss_data.longitude_ << std::endl
                       << "latitude \t" << gnss_data.latitude_ << std::endl;
+
+            origin_pub_ptr_->Publish(gnss_data);
         }
         return gnss_inited;
     }

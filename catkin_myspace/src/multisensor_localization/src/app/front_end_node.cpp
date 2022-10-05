@@ -22,7 +22,7 @@ using namespace multisensor_localization;
 int main(int argc, char **argv)
 {
     /*ros系统配置*/
-    ros::init(argc, argv, "data_pretreat_node");
+    ros::init(argc, argv, "front_end_node");
     ros::NodeHandle nh;
 
     /*glog配置*/

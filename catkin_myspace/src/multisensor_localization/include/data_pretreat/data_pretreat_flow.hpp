@@ -21,6 +21,7 @@
 //发布器
 #include "../publisher/cloud_publisher.hpp"
 #include "../publisher/odometry_publisher.hpp"
+#include "../publisher/origin_publisher.hpp"
 //模块
 // TODO LIST:畸变矫正 但这里似乎是有问题
 
@@ -50,6 +51,7 @@ namespace multisensor_localization
 
         std::shared_ptr<CloudPublisher> cloud_pub_ptr_;
         std::shared_ptr<OdometryPublisher> gnss_pub_ptr_;
+        std::shared_ptr<OriginPublisher> origin_pub_ptr_;
 
         std::deque<CloudData> cloud_data_buff_;
         std::deque<ImuData> imu_data_buff_;
