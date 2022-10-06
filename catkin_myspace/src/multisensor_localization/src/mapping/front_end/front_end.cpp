@@ -3,15 +3,24 @@
  * @Author: Ren Qian
  * @Date: 2020-02-04 18:53:06
  */
-#include "../../../include/mapping/front_end/front_end.hpp"
-#include "../../../include/models/registration/ndt_registration.hpp"
-#include "../../../include/models/cloud_filter/voxel_filter.hpp"
-#include "../../../include/debug_tools/debug_tools.hpp"
+
+//文件读写
 #include <fstream>
 #include <boost/filesystem.hpp>
+// ros库
 #include <ros/package.h>
+// pcl库
 #include <pcl/common/transforms.h>
 #include <pcl/io/pcd_io.h>
+//前端算法
+#include "../../../include/mapping/front_end/front_end.hpp"
+//匹配方法
+#include "../../../include/models/registration/ndt_registration.hpp"
+//体素滤方法
+#include "../../../include/models/cloud_filter/voxel_filter.hpp"
+// debug方式
+#include "../../../include/debug_tools/debug_tools.hpp"
+
 #include <glog/logging.h>
 
 namespace multisensor_localization
@@ -141,12 +150,12 @@ namespace multisensor_localization
         /*直接匹配(非第一帧)*/
         CloudData::CLOUD_PTR result_cloud_ptr(new CloudData::CLOUD());
         registration_ptr_->ScanMatch(filtered_cloud_ptr, predict_pose, result_cloud_ptr, current_frame_.pose_);
-        cloud_pose = current_frame_.pose_;//引用取参值
+        cloud_pose = current_frame_.pose_; //引用取参值
 
         /*更新相邻两帧的相对运动*/
         step_pose = last_pose.inverse() * current_frame_.pose_;
         predict_pose = current_frame_.pose_ * step_pose;
-        last_pose = current_frame_.pose_; 
+        last_pose = current_frame_.pose_;
 
         /*是否更新关键帧*/
         if (fabs(last_key_frame_pose(0, 3) - current_frame_.pose_(0, 3)) +

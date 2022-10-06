@@ -43,7 +43,6 @@ namespace multisensor_localization
                 PublishData();
             }
         }
-
         return true;
     }
 
@@ -92,7 +91,7 @@ namespace multisensor_localization
         if (!odometry_inited)
         {
             odometry_inited = true;
-            front_end_ptr_->SetInitPose(Eigen::Matrix4f::Identity());//不再需要gnss提供初值
+            front_end_ptr_->SetInitPose(Eigen::Matrix4f::Identity()); //不再需要gnss提供初值
             return front_end_ptr_->UpdateOdometry(current_cloud_data_, laser_odometry_);
         }
         return front_end_ptr_->UpdateOdometry(current_cloud_data_, laser_odometry_);

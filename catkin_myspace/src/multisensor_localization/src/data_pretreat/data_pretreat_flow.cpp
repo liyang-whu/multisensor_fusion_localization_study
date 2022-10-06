@@ -7,6 +7,8 @@
  */
 
 #include "../../include/data_pretreat/data_pretreat_flow.hpp"
+
+
 namespace multisensor_localization
 {
 
@@ -28,7 +30,7 @@ namespace multisensor_localization
         /*话题发送*/
         cloud_pub_ptr_ = std::make_shared<CloudPublisher>(nh, "/synced_cloud", "/velo_link", 100);
         gnss_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "/synced_gnss", "/map", "/velo_link", 100);
-        origin_pub_ptr_ = std::make_shared<OriginPublisher>(nh, "ref_point_wgs84", 100, "map");
+        origin_pub_ptr_ = std::make_shared<OriginPublisher>(nh, "/ref_point_wgs84", 100, "map");
         /*畸变矫正*/
 
         /*just a test*/
