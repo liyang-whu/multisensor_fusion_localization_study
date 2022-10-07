@@ -245,7 +245,7 @@ namespace multisensor_localization
         gnss_pose_(1, 3) = current_gnss_data_.local_N_;
         gnss_pose_(2, 3) = current_gnss_data_.local_U_;
         gnss_pose_.block<3, 3>(0, 0) = current_imu_data_.OrientationToMatrix();
-        gnss_pose_ *= lidar_to_imu_;
+        gnss_pose_ *= lidar_to_imu_;//转到雷达坐标系
         /*点云畸变矫正*/
         // current_velocity_data_.TransformCoordinate(lidar_to_imu_.inverse());
         //! TODO 畸变矫正变换似乎有问题 暂时跳过
@@ -259,6 +259,7 @@ namespace multisensor_localization
      **/
     bool DataPretreatFlow::PublishData()
     {
+        /*数据发布 使用同步后的时间戳*/
         cloud_pub_ptr_->Publish(current_cloud_data_.cloud_ptr_, current_cloud_data_.time_stamp_);
         gnss_pub_ptr_->Publish(gnss_pose_, current_gnss_data_.time_stamp_);
 

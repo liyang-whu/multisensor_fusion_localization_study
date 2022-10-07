@@ -10,6 +10,8 @@
 #include "../../../include/sensor_data/cloud_data.hpp"
 #include "../../../include/subscriber/odometry_subscriber.hpp"
 #include "../../../include/publisher/odometry_publisher.hpp"
+#include "../../../include/publisher/key_frame_publisher.hpp"
+#include "../../../include/publisher/key_frames_publisher.hpp"
 
 namespace multisensor_localization
 {
@@ -27,7 +29,10 @@ namespace multisensor_localization
 
         /*话题发布*/
         transformed_odom_pub_ptr_ = std::make_shared<OdometryPublisher>(nh, "/transformed_odom", "/map", "/lidar", 100);
+        key_frame_pub_ptr_ = std::make_shared<KeyFramePublisher>(nh, "/key_frame", "/map", 100);
+        key_frames_pub_ptr_ = std::make_shared<KeyFramesPublisher>(nh, "/optimized_key_frames", "/map", 100);
 
+        //后端优化
     }
 
     /**
@@ -37,7 +42,7 @@ namespace multisensor_localization
      **/
     bool BackEndFlow::Run()
     {
-
+        
     }
 
 } // namespace multisensor_localization

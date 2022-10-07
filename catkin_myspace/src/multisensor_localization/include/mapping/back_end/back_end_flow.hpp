@@ -14,6 +14,9 @@
 #include "../../../include/subscriber/odometry_subscriber.hpp"
 #include "../../../include/publisher/odometry_publisher.hpp"
 
+#include "../../../include/publisher/key_frames_publisher.hpp"
+#include "../../../include/publisher/key_frame_publisher.hpp"
+
 namespace multisensor_localization
 {
     class BackEndFlow
@@ -36,7 +39,8 @@ namespace multisensor_localization
     std::shared_ptr<OdometrySubscriber> laser_odom_sub_ptr_;
 
     std::shared_ptr<OdometryPublisher> transformed_odom_pub_ptr_;
-
+    std::shared_ptr<KeyFramePublisher> key_frame_pub_ptr_;
+    std::shared_ptr<KeyFramesPublisher> key_frames_pub_ptr_;
     };
 }
 
