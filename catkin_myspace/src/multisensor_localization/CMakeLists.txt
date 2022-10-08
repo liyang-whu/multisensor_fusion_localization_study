@@ -14,6 +14,7 @@ include(cmake/pcl.cmake)
 include(cmake/geographicLib.cmake)
 include(cmake/glog.cmake)
 include(cmake/yamlcpp.cmake)
+include(cmake/g2o.cmake)
 
 
 #ROS配置
@@ -40,3 +41,5 @@ target_link_libraries(data_pretreat_node ${catkin_LIBRARIES} ${THIRD_PART_LIBRAR
 
 add_executable(front_end_node src/app/front_end_node.cpp ${ALL_SRCS} )
 target_link_libraries(front_end_node ${catkin_LIBRARIES} ${THIRD_PART_LIBRARIES})
+
+
