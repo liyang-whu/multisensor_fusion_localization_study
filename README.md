@@ -1,12 +1,15 @@
 # 自动驾驶多传感器融合定位
-## 1. 项目介绍
+## 1.项目介绍
 自动驾驶多传感器融合定位的个人学习记录，将会从0到1逐步实现一个完整且实用的建图、定位框架  
 
-## 2. 主要内容
+## 2.主要内容
 
-+ Tag v1.0 惯导数据可视化   
-+ Tag v2.0 DNT里程计  
-+ Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)  
++ [x] Tag v1.0 惯导数据可视化   
++ [x] Tag v2.0 DNT里程计  
++ [ ] Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)  
++ [ ] Tag v4.0 DNT重定位
++ [ ] Tag v5.0 前端适配Fast lio
+ 
 
 
 流程及代码框架可见[博客:多传感器融合定位学习系列](https://blog.csdn.net/weixin_37684239/article/details/126571774?spm=1001.2014.3001.5502) (PS: 咕咕咕 尽量不鸽 :laughing:) 
@@ -24,7 +27,13 @@
 ## 4.如何运行
 参考各Tag中的README,通常运行launch 文件即可
 
-## 5.参考
+## 5.数据集测试
++ [x] KITTI with synced IMU (10 Hz)
++  
+
+## 6.实际路测
+
+## 6.参考
 [任乾 知乎专栏从零开始做自动驾驶](https://zhuanlan.zhihu.com/p/83775731)  
 [李太白lx 从零开始学定位 ](https://blog.csdn.net/tiancailx/article/details/125785641?spm=1001.2014.3001.5501)  
 深蓝学院 多传感器融合定位      
