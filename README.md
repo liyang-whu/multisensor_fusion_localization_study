@@ -1,8 +1,8 @@
 # 自动驾驶多传感器融合定位
 ## 1.项目介绍
 自动驾驶多传感器融合定位的个人学习记录，将会从0到1逐步实现一个完整且实用的建图、定位框架   
-阶段性代码将以Tag形式记录,如遇问题可提交issue :relaxed:  
-感谢任乾、李想等大佬的开源贡献,受益良多
+阶段性代码将以Tag形式记录,10days左右上传新tag,如遇问题可提交issue :relaxed:  
+感谢任乾、李想等大佬的开源贡献,受益良多  
 
 ## 2.主要内容
 
@@ -11,6 +11,7 @@
 + [ ] Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)  
 + [ ] Tag v4.0 DNT重定位
 + [ ] Tag v5.0 前端适配Fast lio
++ [ ] Tag v5.0 Lio gnss松耦合
  
 
 
@@ -30,26 +31,25 @@
 参考各Tag中的README,通常运行launch 文件即可
 
 ## 5 工程适配
-+ 前端里程计  
-[x]DNT点云配准
-[x]ICP点云配准
-[ ] aloam
-[ ] fast lio2
-+ 后端优化器
-[x]g2o  
-[ ]ceres
-[ ]gtsam
-+ 回环检测
-[ ]Scan Context  
-+ 重定位  
-[ ]DNT重定位  
+ **前端里程计**
++ [x] NDT    
++ [ ] ICP
++ [ ] Fast lio2  
++ [ ] Aloam
+**后端优化器**
++ [x] g2o
++ [ ] ceres
++ [ ] gtsam
 
-+ 数据集
-[x] KITTI with synced IMU (10 Hz)
+**回环检测**
++ [ ] Scan Context  
 
-  
+**重定位**
++ [ ] DNT  
 
-
+**数据集**
++ [x] kitti  
+ 
 ## 6.参考
 [任乾 知乎专栏从零开始做自动驾驶](https://zhuanlan.zhihu.com/p/83775731)  
 [李太白lx 从零开始学定位 ](https://blog.csdn.net/tiancailx/article/details/125785641?spm=1001.2014.3001.5501)  
