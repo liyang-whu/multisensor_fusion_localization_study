@@ -7,9 +7,9 @@
 + Tag v1.0 惯导数据可视化   
 + Tag v2.0 DNT里程计  
 + Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)  
- 
 
-流程及代码框架可见[博客:多传感器融合定位学习系列](https://blog.csdn.net/weixin_37684239/article/details/126571774?spm=1001.2014.3001.5502) (PS: 尽量不鸽 :laughing:) 
+
+流程及代码框架可见[博客:多传感器融合定位学习系列](https://blog.csdn.net/weixin_37684239/article/details/126571774?spm=1001.2014.3001.5502) (PS: 咕咕咕 尽量不鸽 :laughing:) 
 
 ## 3.环境依赖
 + ubuntu18.04 
