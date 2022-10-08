@@ -11,6 +11,7 @@
 + [ ] Tag v3.0 DNT里程计+后端优化+回环检测(codeding 中)  
 + [ ] Tag v4.0 DNT重定位
 + [ ] Tag v5.0 前端适配Fast lio
++ [ ] Tag v5.0 Lio gnss松耦合
  
 
 
