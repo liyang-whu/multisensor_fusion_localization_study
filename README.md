@@ -37,7 +37,7 @@
 + [ ] Aloam
 **后端优化器**
 + [x] g2o
-+ [x] ceres
++ [ ] ceres
 + [ ] gtsam
 
 **回环检测**
