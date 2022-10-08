@@ -25,6 +25,7 @@
 参考各Tag中的README,通常运行launch 文件即可
 
 ## 5.参考
-任乾 从零开始做自动驾驶    
-深蓝学院 多传感器融合定位  
-李想 从零开始做定位  
+[任乾 知乎专栏从零开始做自动驾驶](https://zhuanlan.zhihu.com/p/83775731)  
+[李太白lx 从零开始学定位 ](https://blog.csdn.net/tiancailx/article/details/125785641?spm=1001.2014.3001.5501)  
+深蓝学院 多传感器融合定位      
+github.com/XiaotaoGuo/modular_mapping_and_localization_framework
