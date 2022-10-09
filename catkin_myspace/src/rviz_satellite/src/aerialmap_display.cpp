@@ -541,7 +541,7 @@ void AerialMapDisplay::transformAerialMap()
   // get the transform at the time we received the reference lat and lon
   if (!context_->getFrameManager()->transform(frame, ref_fix_.header.stamp, pose, position, orientation))
   {
-    ROS_DEBUG("Error transforming map '%s' from frame '%s' to frame '%s'", qPrintable(getName()), frame.c_str(),
+    ROS_DEBUG("r transforming map '%s' from frame '%s' to frame '%s'", qPrintable(getName()), frame.c_str(),
               qPrintable(fixed_frame_));
 
     setStatus(StatusProperty::Error, "Transform",

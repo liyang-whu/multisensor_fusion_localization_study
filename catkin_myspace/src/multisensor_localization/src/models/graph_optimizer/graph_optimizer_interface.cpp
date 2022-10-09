@@ -8,4 +8,6 @@ namespace multisensor_localization
         max_iterations_num_=max_iterations_num;
     }
 
+    
+
 } // namespace multisensor_localization
